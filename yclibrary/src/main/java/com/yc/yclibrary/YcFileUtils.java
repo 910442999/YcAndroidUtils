@@ -59,7 +59,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 
-import static com.vondear.rxtools.RxConstTool.KB;
 import static com.yc.yclibrary.YcConstUtils.KB;
 
 //import android.util.Log;
@@ -1662,7 +1661,7 @@ public class YcFileUtils {
      * @return 文件的MD5校验码
      */
     public static String getFileMD5(File file) {
-        return YcEncodeUtils.encryptMD5File2String(file);
+        return YcEncryptUtils.encryptMD5File2String(file);
     }
 
     /**

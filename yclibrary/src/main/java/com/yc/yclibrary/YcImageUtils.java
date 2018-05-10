@@ -39,7 +39,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
-import com.vondear.rxtools.view.dialog.RxDialog;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -83,7 +82,7 @@ public class YcImageUtils {
      * @return px值
      */
     public static int dp2px(float dpValue) {
-        final float scale = RxTool.getContext().getResources().getDisplayMetrics().density;
+        final float scale = YcUtils.getContext().getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
@@ -104,7 +103,7 @@ public class YcImageUtils {
      * @return dp值
      */
     public static int px2dp(float pxValue) {
-        final float scale = RxTool.getContext().getResources().getDisplayMetrics().density;
+        final float scale = YcUtils.getContext().getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 
@@ -115,7 +114,7 @@ public class YcImageUtils {
      * @return px值
      */
     public static int sp2px( float spValue) {
-        final float fontScale = RxTool.getContext().getResources().getDisplayMetrics().scaledDensity;
+        final float fontScale = YcUtils.getContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (spValue * fontScale + 0.5f);
     }
 
@@ -126,7 +125,7 @@ public class YcImageUtils {
      * @return sp值
      */
     public static int px2sp( float pxValue) {
-        final float fontScale = RxTool.getContext().getResources().getDisplayMetrics().scaledDensity;
+        final float fontScale = YcUtils.getContext().getResources().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / fontScale + 0.5f);
     }
 
@@ -1397,7 +1396,7 @@ public class YcImageUtils {
      * @return {@code true}: 成功<br>{@code false}: 失败
      */
     public static boolean save(Bitmap src, String filePath, CompressFormat format) {
-        return save(src, RxFileTool.getFileByPath(filePath), format, false);
+        return save(src, YcFileUtils.getFileByPath(filePath), format, false);
     }
 
     /**
@@ -1422,7 +1421,7 @@ public class YcImageUtils {
      * @return {@code true}: 成功<br>{@code false}: 失败
      */
     public static boolean save(Bitmap src, String filePath, CompressFormat format, boolean recycle) {
-        return save(src, RxFileTool.getFileByPath(filePath), format, recycle);
+        return save(src, YcFileUtils.getFileByPath(filePath), format, recycle);
     }
 
     /**
@@ -1435,7 +1434,7 @@ public class YcImageUtils {
      * @return {@code true}: 成功<br>{@code false}: 失败
      */
     public static boolean save(Bitmap src, File file, CompressFormat format, boolean recycle) {
-        if (isEmptyBitmap(src) || !RxFileTool.createOrExistsFile(file)) return false;
+        if (isEmptyBitmap(src) || !YcFileUtils.createOrExistsFile(file)) return false;
         System.out.println(src.getWidth() + ", " + src.getHeight());
         OutputStream os = null;
         boolean ret = false;
@@ -1446,7 +1445,7 @@ public class YcImageUtils {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            RxFileTool.closeIO(os);
+            YcFileUtils.closeIO(os);
         }
         return ret;
     }
@@ -1481,7 +1480,7 @@ public class YcImageUtils {
      * @return 图片类型
      */
     public static String getImageType(String filePath) {
-        return getImageType(RxFileTool.getFileByPath(filePath));
+        return getImageType(YcFileUtils.getFileByPath(filePath));
     }
 
     /**
@@ -1500,7 +1499,7 @@ public class YcImageUtils {
             e.printStackTrace();
             return null;
         } finally {
-            RxFileTool.closeIO(is);
+            YcFileUtils.closeIO(is);
         }
     }
 
