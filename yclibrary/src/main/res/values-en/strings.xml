@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="loading">loading...</string>
-    <string name="read_write_permissions">Please get write SD Card permissions</string>
+    <string name="read_write_permissions">Please get the SDCard permission first.</string>
 </resources>
