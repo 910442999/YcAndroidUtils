@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Yc Library</string>
+    <string name="read_write_permissions">请先获取写入SDCard权限</string>
+</resources>
