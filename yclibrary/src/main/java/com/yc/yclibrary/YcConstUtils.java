@@ -1,7 +1,6 @@
 package com.yc.yclibrary;
 
 /**
- *
  * @author vondear
  * @date 2016/1/24
  * 常量工具类
@@ -119,5 +118,12 @@ public class YcConstUtils {
      * 正则：IP地址
      */
     public static final String REGEX_IP = "((2[0-4]\\d|25[0-5]|[01]?\\d\\d?)\\.){3}(2[0-4]\\d|25[0-5]|[01]?\\d\\d?)";
+
+    //无缓存
+    public static final int NONE = 0;
+    //缓存所有
+    public static final int ALL = 1;
+    public static final int DATA = 3;
+    public static final int RESOURCE = 4;
 
 }
