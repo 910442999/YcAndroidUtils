@@ -1,6 +1,7 @@
 *.iml
 .gradle
 /local.properties
+/bintrayUpload.gradle
 /.idea/workspace.xml
 /.idea/libraries
 .idea/
