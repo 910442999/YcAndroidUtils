@@ -1,35 +1,25 @@
 /** 以下开始是将Android Library上传到jcenter的相关配置**/
 apply plugin: 'com.novoda.bintray-release'//添加
 
-// load properties
-Properties properties = new Properties()
-File localPropertiesFile = project.file("local.properties");
-if (localPropertiesFile.exists()) {
-    properties.load(localPropertiesFile.newDataInputStream())
-}
-def bintrayUser = properties.getProperty("bintray.user")
-def bintrayApikey = properties.getProperty("bintray.apikey")
-
-//// read properties
-def projectName = properties.getProperty("project.name")
-def projectGroupId = properties.getProperty("project.groupId")
-def projectArtifactId = properties.getProperty("project.artifactId")
-def projectSiteUrl = properties.getProperty("project.siteUrl")
-
 publish{
-    repoName = projectName//远程仓库名字,不指明，默认是上传到maven
-    userOrg = bintrayUser//bintray.com的用户名
-    groupId = projectGroupId//jcenter上的路径
-    artifactId = projectArtifactId//项目名称
-    publishVersion = '1.0.0'//版本号
+    repoName = 'YcAndroidUtils'//远程仓库名字,不指明，默认是上传到maven
+    userOrg = '910442999'//bintray.com的用户名
+    groupId = 'com.yc'//jcenter上的路径
+    artifactId = 'YcAndroidUtils'//项目名称
+    publishVersion = '1.0.1'//版本号
     desc = 'this is android tools'//描述，不重要
-    website = projectSiteUrl//项目主页
+    website = 'https://github.com/910442999/YcAndroidUtils'//项目主页
 }
 tasks.withType(Javadoc) {//防止编码问题
     options.addStringOption('Xdoclint:none', '-quiet')
     options.addStringOption('encoding', 'UTF-8')
     options.addStringOption('charSet', 'UTF-8')
+    options{ encoding "UTF-8"
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+    }
 }
+
 
 
 ////Copy类型 打jar包相关
