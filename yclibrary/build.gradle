@@ -6,7 +6,7 @@ android {
     compileSdkVersion 27
 //    resourcePrefix "yc"    //这个随便填
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 1
         versionName "1.0.0"
@@ -43,5 +43,5 @@ dependencies {
 
 //apply from: "../bintrayUpload.gradle"
 //上传
-//apply from: 'bintrayUpload.gradle'
+apply from: 'bintrayUpload.gradle'
 

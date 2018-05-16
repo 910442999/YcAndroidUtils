@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.yc.ycandroidutils"
-        minSdkVersion 15
+        minSdkVersion 19
         targetSdkVersion 27
         versionCode 3
         versionName "1.0.2"
