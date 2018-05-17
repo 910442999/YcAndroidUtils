@@ -1,6 +1,7 @@
 package com.yc.yclibrary;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -51,6 +52,7 @@ public class YcUtils {
         }
         throw new NullPointerException("请先调用init()方法");
     }
+
 
     /**
      * dip转px

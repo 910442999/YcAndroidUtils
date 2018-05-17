@@ -26,6 +26,49 @@ import static com.yc.yclibrary.YcConstUtils.KB;
 import static com.yc.yclibrary.YcConstUtils.MB;
 
 //数据处理相关
+
+/**
+ * 数据的判断
+ * isNullString                : 判断字符串是否为空 为空即true
+ * isEmpty                     : 判断对象是否为空 为空即true
+ * isInteger                   : 判断字符串是否是整数
+ * isDouble                    : 判断字符串是否是浮点数
+ * isNumber                    : 判断字符串是否是数字
+ * getAstro                    : 根据日期判断星座
+ * <p>
+ * 数据的转换
+ * stringToInt                 : 字符串转换成整数 ,转换失败将会 return 0;
+ * stringToLong                : 字符串转换成long ,转换失败将会 return 0;
+ * stringToDouble              : 字符串转换成double ,转换失败将会 return 0;
+ * StringToInputStream         : 字符串转InputStream
+ * upperFirstLetter            : 首字母大写
+ * lowerFirstLetter            : 首字母小写
+ * reverse                     : 反转字符串
+ * toDBC                       : 转化为半角字符
+ * toSBC                       : 转化为全角字符
+ * oneCn2ASCII                 : 单个汉字转成ASCII码
+ * oneCn2PY                    : 单个汉字转成拼音
+ * getPYFirstLetter            : 获得第一个汉字首字母
+ * cn2PY                       : 中文转拼音
+ * bytes2HexString             : byteArr转hexString
+ * hexString2Bytes             : hexString转byteArr
+ * hex2Dec                     : hexChar转int
+ * chars2Bytes                 : charArr转byteArr
+ * bytes2Chars                 : byteArr转charArr
+ * byte2Size                   : 字节数转以unit为单位的size
+ * size2Byte                   : 以unit为单位的size转字节数
+ * byte2FitSize                : 字节数转合适大小
+ * input2OutputStream          : inputStream转outputStream
+ * output2InputStream          : outputStream转inputStream
+ * inputStream2Bytes           : inputStream转byteArr
+ * bytes2InputStream           : byteArr转inputStream
+ * outputStream2Bytes          : outputStream转byteArr
+ * bytes2OutputStream          : outputStream转byteArr
+ * inputStream2String          : inputStream转string按编码
+ * string2InputStream          : string转inputStream按编码
+ * outputStream2String         : outputStream转string按编码
+ * string2OutputStream         : string转outputStream按编码
+ */
 public class YcDataConversionUtils {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F'};
@@ -305,6 +348,33 @@ public class YcDataConversionUtils {
             return "0" + df.format(stringToDouble(str));
         } else {
             return df.format(stringToDouble(str));
+        }
+    }
+
+    /**
+     * 将字符串格式化为带两位小数的字符串
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static String format2Decimals(Double str, int digits) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        df.setMaximumFractionDigits(digits);
+        return df.format(str);
+    }
+
+    /**
+     * 将字符串格式化为带两位小数的字符串
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static String format2Decimals(Double str) {
+        DecimalFormat df = new DecimalFormat("#.00");
+        if (df.format(str).startsWith(".")) {
+            return "0" + df.format(str);
+        } else {
+            return df.format(str);
         }
     }
 

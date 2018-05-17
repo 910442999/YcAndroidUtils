@@ -33,3 +33,13 @@
 
 #------------------------------------------------------------
 
+-keep class com.yc.yclibrary.** { *; }
+-keepclassmembers class com.yc.yclibrary.** { *; }
+-dontwarn com.yc.yclibrary.**
+
+# @Keep
+-keep,allowobfuscation @interface android.support.annotation.Keep
+-keep @android.support.annotation.Keep class *
+-keepclassmembers class * {
+    @android.support.annotation.Keep *;
+}
