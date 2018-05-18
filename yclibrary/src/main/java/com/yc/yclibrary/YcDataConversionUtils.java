@@ -159,6 +159,18 @@ public class YcDataConversionUtils {
     }
 
     /**
+     * 判断字符串有几位小数 Judging the string has a few decimal places
+     */
+    public static int judgingStringHasFewDecimal(String str) {
+        int index = str.lastIndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
+        if (index > -1) {
+            index = str.substring(index + 1).length();//取得小数点后的数值，不包括小数点
+        }
+        return index;
+    }
+
+
+    /**
      * 根据日期判断星座
      *
      * @param month
@@ -352,19 +364,18 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串
      *
-     * @param str 字符串
+     * @param str 字符串 "#0.00"
      * @return
      */
-    public static String format2Decimals(Double str, int digits) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        df.setMaximumFractionDigits(digits);
+    public static String format2Decimals(Double str, String digits) {
+        DecimalFormat df = new DecimalFormat(digits);
         return df.format(str);
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 将Double格式化为带两位小数的字符串
      *
      * @param str 字符串
      * @return
@@ -375,6 +386,28 @@ public class YcDataConversionUtils {
             return "0" + df.format(str);
         } else {
             return df.format(str);
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值
+     * @param str "#0.00"
+     * @param digits
+     * @return
+     */
+
+    public static String format2Decimals(String str, int digit , String digits) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            DecimalFormat df = new DecimalFormat(digits);
+            if (df.format(stringToDouble(str)).startsWith(".")) {
+                return "0" + df.format(stringToDouble(str));
+            } else {
+                return df.format(stringToDouble(str));
+            }
         }
     }
 
