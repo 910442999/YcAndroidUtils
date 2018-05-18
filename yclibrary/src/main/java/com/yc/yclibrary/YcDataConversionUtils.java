@@ -16,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.temporal.ValueRange;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -375,6 +376,40 @@ public class YcDataConversionUtils {
     }
 
     /**
+     * 将字符串从中间对折显示两行
+     *
+     * @param str 字符串
+     * @return
+     */
+    public static String stringTwoLines(String str) {
+        int i = str.length() / 2;
+        String substring = str.substring(0, i);
+        String substring1 = str.substring(i, str.length());
+        return substring + "\n" + substring1;
+    }
+
+    /**
+     * 隐藏字符串中间的缺省
+     *
+     * @param start
+     * @param end
+     * @param center
+     * @param string
+     * @param centerString
+     * @return
+     */
+    public static String hideCenterString(int start, int end, int center, String centerString, String string) {
+        String substring = string.substring(0, start);
+        String substring1 = string.substring(string.length() - end, string.length());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < center; i++) {
+            stringBuilder.append(centerString);
+        }
+        return substring + stringBuilder.toString() + substring1;
+    }
+
+
+    /**
      * 将Double格式化为带两位小数的字符串
      *
      * @param str 字符串
@@ -391,18 +426,46 @@ public class YcDataConversionUtils {
 
     /**
      * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值
-     * @param str "#0.00"
+     *
+     * @param str    "#0.00"
      * @param digits
      * @return
      */
 
-    public static String format2Decimals(String str, int digit , String digits) {
+    public static String format2Decimals(String str, int digit, String digits) {
 
         int i = judgingStringHasFewDecimal(str);
         if (digit > i) {
             return str;
         } else {
             DecimalFormat df = new DecimalFormat(digits);
+            if (df.format(stringToDouble(str)).startsWith(".")) {
+                return "0" + df.format(stringToDouble(str));
+            } else {
+                return df.format(stringToDouble(str));
+            }
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值
+     *
+     * @param digit
+     * @return
+     */
+
+    public static String format2Decimals(String str, int digit) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("#0.");
+            for (int j = 0; j < digit; j++) {
+                stringBuilder.append("0");
+            }
+            DecimalFormat df = new DecimalFormat(stringBuilder.toString());
             if (df.format(stringToDouble(str)).startsWith(".")) {
                 return "0" + df.format(stringToDouble(str));
             } else {

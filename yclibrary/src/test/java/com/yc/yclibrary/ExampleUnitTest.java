@@ -66,7 +66,8 @@ public class ExampleUnitTest {
     @Test
     public void test() {
         Double str = 11111534534.00000000000000000000001222;
-        //        int index = str.lastIndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
+        String str1 = "1111111111sdfghjklsdfghjkert";
+        //        int index = str.last IndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
         //        if (index > -1) {
         //
         //            int len = str.substring(index + 1).length();//取得小数点后的数值，不包括小数点
@@ -75,11 +76,27 @@ public class ExampleUnitTest {
         //            System.out.println(str);
         //        }
 
-        DecimalFormat df = new DecimalFormat("#.");
-        //        BigDecimal result = new BigDecimal(str);
-        ////        String bigDecimal = result.setScale(10, BigDecimal.ROUND_HALF_DOWN).toString();
-        df.setMaximumFractionDigits(10);
-        System.out.println(df.format(str));
+        //        DecimalFormat df = new DecimalFormat("#.");
+        //        //        BigDecimal result = new BigDecimal(str);
+        //        ////        String bigDecimal = result.setScale(10, BigDecimal.ROUND_HALF_DOWN).toString();
+        //        df.setMaximumFractionDigits(10);
+        //        System.out.println(df.format(str));
+        //------------------------------------------------------
+        //        StringBuilder stringBuilder  = new StringBuilder();
+        //        stringBuilder.append("#0.");
+        //        for (int j = 0; j < 5; j++) {
+        //            stringBuilder.append("0");
+        //        }
+        //        DecimalFormat df = new DecimalFormat(stringBuilder.toString());
+        //        System.out.println(df.format(str));
+        //---------------------------------
 
+        String substring = str1.substring(0, 8);
+        String substring1 = str1.substring(str1.length() - 8, str1.length());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            stringBuilder.append(".");
+        }
+        System.out.println(substring + stringBuilder.toString() + substring1);
     }
 }
