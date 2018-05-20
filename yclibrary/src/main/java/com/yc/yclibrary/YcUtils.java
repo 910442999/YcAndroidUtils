@@ -1,7 +1,6 @@
 package com.yc.yclibrary;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -26,6 +25,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+/**
+ * Yc工具类 YcUtils
+ * getContext 获取 Context
+ * dip2px   dip转px
+ * dp2px    dp转px
+ * px2dip   px转dip
+ * px2dp    px转dp
+ * sp2px     sp转px
+ * px2sp     px转sp
+ * getRsString      获取string 资源文件
+ * getRsDrawable    获取 Drawable 资源文件
+ * getRsColor       获取 Color 资源文件
+ * delayToDo        延迟任务
+ * countDown        倒计时
+ * setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
+ * setEdType        设置光标输入位置
+ * getSystemLanguage 获取系统语言
+ * changeAppLanguage 更改App语言
+ */
 public class YcUtils {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
@@ -200,6 +218,7 @@ public class YcUtils {
     }
 
     /**
+     * 设置光标输入位置
      * @param editText
      */
     public static void setEdType(final EditText editText) {

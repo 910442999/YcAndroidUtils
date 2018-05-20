@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-/**
+/**Fragment管理相关
  * <pre>
  * add                   : 新增 fragment
  * show                  : 显示 fragment

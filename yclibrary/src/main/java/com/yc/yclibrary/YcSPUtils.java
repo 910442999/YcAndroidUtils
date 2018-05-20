@@ -18,12 +18,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/08/02
- *     desc  : utils about shared preference
- * </pre>
+ sp缓存 YcSPUtils
+
+ getInstance: 获取 SP 实例
+ put        : SP 中写入数据
+ getString  : SP 中读取 String
+ getInt     : SP 中读取 int
+ getLong    : SP 中读取 long
+ getFloat   : SP 中读取 float
+ getBoolean : SP 中读取 boolean
+ getAll     : SP 中获取所有键值对
+ getStringSet : SP 中读取set
+ getObject : SP 中读取对象
+ contains   : SP 中是否存在该 key
+ remove     : SP 中移除该 key
+ clear      : SP 中清除所有数据
  */
 @SuppressLint("ApplySharedPref")
 public final class YcSPUtils {

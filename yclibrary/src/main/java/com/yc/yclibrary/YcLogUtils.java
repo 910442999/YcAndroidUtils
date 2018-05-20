@@ -39,12 +39,35 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/09/21
- *     desc  : utils about log
- * </pre>
+ * log工具类  YcLogUtils
+ * <p>
+ * getConfig               : 获取 log 配置
+ * Config.setLogSwitch     : 设置 log 总开关
+ * Config.setConsoleSwitch : 设置 log 控制台开关
+ * Config.setGlobalTag     : 设置 log 全局 tag
+ * Config.setLogHeadSwitch : 设置 log 头部信息开关
+ * Config.setLog2FileSwitch: 设置 log 文件开关
+ * Config.setDir           : 设置 log 文件存储目录
+ * Config.setFilePrefix    : 设置 log 文件前缀
+ * Config.setBorderSwitch  : 设置 log 边框开关
+ * Config.setConsoleFilter : 设置 log 控制台过滤器
+ * Config.setFileFilter    : 设置 log 文件过滤器
+ * Config.setStackDeep     : 设置 log 栈深度
+ * v                       : tag 为类名的 Verbose 日志
+ * vTag                    : 自定义 tag 的 Verbose 日志
+ * d                       : tag 为类名的 Debug 日志
+ * dTag                    : 自定义 tag 的 Debug 日志
+ * i                       : tag 为类名的 Info 日志
+ * iTag                    : 自定义 tag 的 Info 日志
+ * w                       : tag 为类名的 Warn 日志
+ * wTag                    : 自定义 tag 的 Warn 日志
+ * e                       : tag 为类名的 Error 日志
+ * eTag                    : 自定义 tag 的 Error 日志
+ * a                       : tag 为类名的 Assert 日志
+ * aTag                    : 自定义 tag 的 Assert 日志
+ * file                    : log 到文件
+ * json                    : log 字符串之 json
+ * xml                     : log 字符串之 xml
  */
 public final class YcLogUtils {
 
@@ -64,27 +87,27 @@ public final class YcLogUtils {
 
     private static final int FILE = 0x10;
     private static final int JSON = 0x20;
-    private static final int XML  = 0x30;
+    private static final int XML = 0x30;
 
-    private static final String FILE_SEP       = System.getProperty("file.separator");
-    private static final String LINE_SEP       = System.getProperty("line.separator");
-    private static final String TOP_CORNER     = "┌";
-    private static final String MIDDLE_CORNER  = "├";
-    private static final String LEFT_BORDER    = "│ ";
-    private static final String BOTTOM_CORNER  = "└";
-    private static final String SIDE_DIVIDER   = "────────────────────────────────────────────────────────";
+    private static final String FILE_SEP = System.getProperty("file.separator");
+    private static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String TOP_CORNER = "┌";
+    private static final String MIDDLE_CORNER = "├";
+    private static final String LEFT_BORDER = "│ ";
+    private static final String BOTTOM_CORNER = "└";
+    private static final String SIDE_DIVIDER = "────────────────────────────────────────────────────────";
     private static final String MIDDLE_DIVIDER = "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄";
-    private static final String TOP_BORDER     = TOP_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
-    private static final String MIDDLE_BORDER  = MIDDLE_CORNER + MIDDLE_DIVIDER + MIDDLE_DIVIDER;
-    private static final String BOTTOM_BORDER  = BOTTOM_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
-    private static final int    MAX_LEN        = 3000;
+    private static final String TOP_BORDER = TOP_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
+    private static final String MIDDLE_BORDER = MIDDLE_CORNER + MIDDLE_DIVIDER + MIDDLE_DIVIDER;
+    private static final String BOTTOM_BORDER = BOTTOM_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
+    private static final int MAX_LEN = 3000;
     @SuppressLint("SimpleDateFormat")
-    private static final Format FORMAT         = new SimpleDateFormat("MM-dd HH:mm:ss.SSS ");
-    private static final String NOTHING        = "log nothing";
-    private static final String NULL           = "null";
-    private static final String ARGS           = "args";
-    private static final String PLACEHOLDER    = " ";
-    private static final Config CONFIG         = new Config();
+    private static final Format FORMAT = new SimpleDateFormat("MM-dd HH:mm:ss.SSS ");
+    private static final String NOTHING = "log nothing";
+    private static final String NULL = "null";
+    private static final String ARGS = "args";
+    private static final String PLACEHOLDER = " ";
+    private static final Config CONFIG = new Config();
     private static ExecutorService sExecutor;
 
     private YcLogUtils() {
@@ -192,9 +215,11 @@ public final class YcLogUtils {
     }
 
     public static void log(final int type, final String tag, final Object... contents) {
-        if (!CONFIG.mLogSwitch || (!CONFIG.mLog2ConsoleSwitch && !CONFIG.mLog2FileSwitch)) return;
+        if (!CONFIG.mLogSwitch || (!CONFIG.mLog2ConsoleSwitch && !CONFIG.mLog2FileSwitch))
+            return;
         int type_low = type & 0x0f, type_high = type & 0xf0;
-        if (type_low < CONFIG.mConsoleFilter && type_low < CONFIG.mFileFilter) return;
+        if (type_low < CONFIG.mConsoleFilter && type_low < CONFIG.mFileFilter)
+            return;
         final TagHead tagHead = processTagAndHead(tag);
         String body = processBody(type_high, contents);
         if (CONFIG.mLog2ConsoleSwitch && type_low >= CONFIG.mConsoleFilter && type_high != FILE) {
@@ -268,7 +293,8 @@ public final class YcLogUtils {
 
     private static String getFileName(final StackTraceElement targetElement) {
         String fileName = targetElement.getFileName();
-        if (fileName != null) return fileName;
+        if (fileName != null)
+            return fileName;
         // If name of file is null, should add
         // "-keepattributes SourceFile,LineNumberTable" in proguard file.
         String className = targetElement.getClassName();
@@ -288,7 +314,8 @@ public final class YcLogUtils {
         if (contents != null) {
             if (contents.length == 1) {
                 Object object = contents[0];
-                if (object != null) body = object.toString();
+                if (object != null)
+                    body = object.toString();
                 if (type == JSON) {
                     body = formatJson(body);
                 } else if (type == XML) {
@@ -387,7 +414,8 @@ public final class YcLogUtils {
             for (String aHead : head) {
                 Log.println(type, tag, CONFIG.mLogBorderSwitch ? LEFT_BORDER + aHead : aHead);
             }
-            if (CONFIG.mLogBorderSwitch) Log.println(type, tag, MIDDLE_BORDER);
+            if (CONFIG.mLogBorderSwitch)
+                Log.println(type, tag, MIDDLE_BORDER);
         }
     }
 
@@ -489,11 +517,14 @@ public final class YcLogUtils {
 
     private static boolean createOrExistsFile(final String filePath) {
         File file = new File(filePath);
-        if (file.exists()) return file.isFile();
-        if (!createOrExistsDir(file.getParentFile())) return false;
+        if (file.exists())
+            return file.isFile();
+        if (!createOrExistsDir(file.getParentFile()))
+            return false;
         try {
             boolean isCreate = file.createNewFile();
-            if (isCreate) printDeviceInfo(filePath);
+            if (isCreate)
+                printDeviceInfo(filePath);
             return isCreate;
         } catch (IOException e) {
             e.printStackTrace();
@@ -533,7 +564,8 @@ public final class YcLogUtils {
     }
 
     private static boolean isSpace(final String s) {
-        if (s == null) return true;
+        if (s == null)
+            return true;
         for (int i = 0, len = s.length(); i < len; ++i) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 return false;
@@ -569,7 +601,8 @@ public final class YcLogUtils {
             }
         });
         try {
-            if (submit.get()) return;
+            if (submit.get())
+                return;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
@@ -581,22 +614,23 @@ public final class YcLogUtils {
     public static class Config {
         private String mDefaultDir;// The default storage directory of log.
         private String mDir;       // The storage directory of log.
-        private String  mFilePrefix        = "util";// The file prefix of log.
-        private boolean mLogSwitch         = true;  // The switch of log.
+        private String mFilePrefix = "util";// The file prefix of log.
+        private boolean mLogSwitch = true;  // The switch of log.
         private boolean mLog2ConsoleSwitch = true;  // The logcat's switch of log.
-        private String  mGlobalTag         = null;  // The global tag of log.
-        private boolean mTagIsSpace        = true;  // The global tag is space.
-        private boolean mLogHeadSwitch     = true;  // The head's switch of log.
-        private boolean mLog2FileSwitch    = false; // The file's switch of log.
-        private boolean mLogBorderSwitch   = true;  // The border's switch of log.
-        private boolean mSingleTagSwitch   = true;  // The single tag of log.
-        private int     mConsoleFilter     = V;     // The console's filter of log.
-        private int     mFileFilter        = V;     // The file's filter of log.
-        private int     mStackDeep         = 1;     // The stack's deep of log.
-        private int     mStackOffset       = 0;     // The stack's offset of log.
+        private String mGlobalTag = null;  // The global tag of log.
+        private boolean mTagIsSpace = true;  // The global tag is space.
+        private boolean mLogHeadSwitch = true;  // The head's switch of log.
+        private boolean mLog2FileSwitch = false; // The file's switch of log.
+        private boolean mLogBorderSwitch = true;  // The border's switch of log.
+        private boolean mSingleTagSwitch = true;  // The single tag of log.
+        private int mConsoleFilter = V;     // The console's filter of log.
+        private int mFileFilter = V;     // The file's filter of log.
+        private int mStackDeep = 1;     // The stack's deep of log.
+        private int mStackOffset = 0;     // The stack's offset of log.
 
         private Config() {
-            if (mDefaultDir != null) return;
+            if (mDefaultDir != null)
+                return;
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                     && YcUtils.getContext().getExternalCacheDir() != null)
                 mDefaultDir = YcUtils.getContext().getExternalCacheDir() + FILE_SEP + "log" + FILE_SEP;
@@ -708,9 +742,9 @@ public final class YcLogUtils {
     }
 
     private static class TagHead {
-        String   tag;
+        String tag;
         String[] consoleHead;
-        String   fileHead;
+        String fileHead;
 
         TagHead(String tag, String[] consoleHead, String fileHead) {
             this.tag = tag;

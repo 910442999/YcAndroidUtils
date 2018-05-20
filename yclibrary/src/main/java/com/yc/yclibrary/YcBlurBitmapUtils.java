@@ -9,6 +9,9 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 
+/**
+ * 模糊位图工具类
+ */
 public class YcBlurBitmapUtils {
     private static YcBlurBitmapUtils sInstance;
 

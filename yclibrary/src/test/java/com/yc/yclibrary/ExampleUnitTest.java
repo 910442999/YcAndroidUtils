@@ -7,8 +7,6 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 
-import static org.junit.Assert.*;
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -45,6 +43,7 @@ public class ExampleUnitTest {
         DecimalFormat format5 = (DecimalFormat) NumberFormat.getPercentInstance();
         format5.applyPattern("#####0 ");
         System.out.println(format5.format(v8));
+
         //        System.out.println(Double.toString(v6));
         //        BigDecimal p1 = new BigDecimal(Double.toString(v6));
         //        BigDecimal p2 = new BigDecimal(v8 + "");
@@ -65,7 +64,8 @@ public class ExampleUnitTest {
 
     @Test
     public void test() {
-        Double str = 11111534534.00000000000000000000001222;
+        Double str = 11111534534.000055555555555550001228;
+        String str2 = "11111534534.00000000000000000000001228";
         String str1 = "1111111111sdfghjklsdfghjkert";
         //        int index = str.last IndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
         //        if (index > -1) {
@@ -91,12 +91,11 @@ public class ExampleUnitTest {
         //        System.out.println(df.format(str));
         //---------------------------------
 
-        String substring = str1.substring(0, 8);
-        String substring1 = str1.substring(str1.length() - 8, str1.length());
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            stringBuilder.append(".");
-        }
-        System.out.println(substring + stringBuilder.toString() + substring1);
+        System.out.println(BigDecimal.ROUND_HALF_UP==4);
+
+        System.out.println( new BigDecimal(str).setScale(12, BigDecimal.ROUND_HALF_UP).toString() );
+        System.out.println( new BigDecimal(str2).setScale(25, BigDecimal.ROUND_HALF_UP).toString());
+
+
     }
 }

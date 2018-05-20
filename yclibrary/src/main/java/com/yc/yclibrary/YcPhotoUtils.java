@@ -31,9 +31,12 @@ import static com.yc.yclibrary.YcFileUtils.isGooglePhotosUri;
 import static com.yc.yclibrary.YcFileUtils.isMediaDocument;
 
 /**
- *
- * @author vondear
- * @date 2016/1/24
+ * 图片工具类    YcPhotoUtils
+ * openCameraImage             : 调用系统相机
+ * openLocalImage              : 调用系统相册
+ * cropImage                   : 裁剪图片
+ * createImagePathUri          : 创建一条图片地址uri,用于保存拍照后的照片
+ * getRealFilePath             : 获取图片uri的真实文件地址
  */
 
 public class YcPhotoUtils {
@@ -159,7 +162,7 @@ public class YcPhotoUtils {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             imageFilePath[0] = Uri.parse("");
-            YcToastUtils.showShort(YcUtils.getRsString(YcUtils.getContext(),R.string.read_write_permissions));
+            YcToastUtils.showShort(YcUtils.getRsString(YcUtils.getContext(), R.string.read_write_permissions));
         } else {
             String status = Environment.getExternalStorageState();
             SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);
@@ -185,7 +188,8 @@ public class YcPhotoUtils {
 
     //此方法 只能用于4.4以下的版本
     public static String getRealFilePath(final Context context, final Uri uri) {
-        if (null == uri) return null;
+        if (null == uri)
+            return null;
         final String scheme = uri.getScheme();
         String data = null;
         if (scheme == null)
@@ -196,7 +200,7 @@ public class YcPhotoUtils {
             String[] projection = {MediaStore.Images.ImageColumns.DATA};
             Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
 
-//            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
+            //            Cursor cursor = context.getContentResolver().query(uri, new String[]{MediaStore.Images.ImageColumns.DATA}, null, null, null);
             if (null != cursor) {
                 if (cursor.moveToFirst()) {
                     int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
