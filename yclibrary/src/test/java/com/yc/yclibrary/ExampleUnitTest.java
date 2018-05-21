@@ -3,6 +3,7 @@ package com.yc.yclibrary;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
@@ -91,12 +92,12 @@ public class ExampleUnitTest {
         //        System.out.println(df.format(str));
         //---------------------------------
 
-        String substring = str1.substring(0, 8);
-        String substring1 = str1.substring(str1.length() - 8, str1.length());
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            stringBuilder.append(".");
-        }
-        System.out.println(substring + stringBuilder.toString() + substring1);
+        DecimalFormat formater = new DecimalFormat();
+        formater.setMaximumFractionDigits(2);
+        formater.setGroupingSize(0);
+        formater.setRoundingMode(RoundingMode.FLOOR);
+        System.out.println(formater.format(3.1415926));
+        String result = formater.format(3.1495926);
+        System.out.println(result);
     }
 }

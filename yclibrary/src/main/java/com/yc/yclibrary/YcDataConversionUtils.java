@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.temporal.ValueRange;
 import java.util.Collection;
@@ -365,7 +366,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 将字符串格式化为 (自定义位数 ) 小数的字符串
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 四舍五入
      *
      * @param str 字符串 "#0.00"
      * @return
@@ -373,6 +374,47 @@ public class YcDataConversionUtils {
     public static String format2Decimals(Double str, String digits) {
         DecimalFormat df = new DecimalFormat(digits);
         return df.format(str);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+     *
+     * @param aDouble
+     * @param digits  保留的小数点的位数
+     * @return
+     */
+    public static String format2Decimals(Double aDouble, int digits) {
+        return format2Decimals(aDouble, digits, 0);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+     *
+     * @param aDouble
+     * @param digits
+     * @param groupingSize
+     * @return
+     */
+    public static String format2Decimals(Double aDouble, int digits, int groupingSize) {
+        return format2Decimals(aDouble, digits, groupingSize, RoundingMode.FLOOR);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+     *
+     * @param aDouble
+     * @param digits
+     * @param groupingSize
+     * @param FLOOR
+     * @return
+     */
+    public static String format2Decimals(Double aDouble, int digits, int groupingSize, RoundingMode FLOOR) {
+        DecimalFormat formater = new DecimalFormat();
+        formater.setMaximumFractionDigits(digits);
+        formater.setGroupingSize(groupingSize);
+        formater.setRoundingMode(FLOOR);
+        String result = formater.format(aDouble);
+        return result;
     }
 
     /**
@@ -425,7 +467,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
      *
      * @param str    "#0.00"
      * @param digits
@@ -448,7 +490,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
      *
      * @param digit
      * @return
@@ -471,6 +513,23 @@ public class YcDataConversionUtils {
             } else {
                 return df.format(stringToDouble(str));
             }
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+     *
+     * @param digit
+     * @return
+     */
+
+    public static String formatDecimalsNoRounding(String str, int digit) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            return format2Decimals(stringToDouble(str), digit);
         }
     }
 
