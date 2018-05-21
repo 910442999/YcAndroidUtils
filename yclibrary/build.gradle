@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 10
-        versionName "1.1.0"
+        versionCode 11
+        versionName "1.1.1"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -43,5 +43,5 @@ dependencies {
 
 //apply from: "../bintrayUpload.gradle"
 //上传
-apply from: 'bintrayUpload.gradle'
+//apply from: 'bintrayUpload.gradle'
 
