@@ -63,21 +63,32 @@ public class YcConstUtils {
     /******************** 正则相关常量 ********************/
 
     //--------------------------------------------正则表达式-----------------------------------------
-    /**
-     * 原文链接：http://caibaojian.com/regexp-example.html
-     * 提取信息中的网络链接:(h|H)(r|R)(e|E)(f|F) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)?
-     * 提取信息中的邮件地址:\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*
-     * 提取信息中的图片链接:(s|S)(r|R)(c|C) *= *('|")?(\w|\\|\/|\.)+('|"| *|>)?
-     * 提取信息中的IP地址:(\d+)\.(\d+)\.(\d+)\.(\d+)
-     * 提取信息中的中国电话号码（包括移动和固定电话）:(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}
-     * 提取信息中的中国邮政编码:[1-9]{1}(\d+){5}
-     * 提取信息中的中国身份证号码:\d{18}|\d{15}
-     * 提取信息中的整数：\d+
-     * 提取信息中的浮点数（即小数）：(-?\d*)\.?\d+
-     * 提取信息中的任何数字 ：(-?\d*)(\.\d+)?
-     * 提取信息中的中文字符串：[\u4e00-\u9fa5]*
-     * 提取信息中的双字节字符串 (汉字)：[^\x00-\xff]*
-     */
+    //提取信息中的网络链接:
+    public static final String REGEX_EXTRACT_LINK = "(h|H)(r|R)(e|E)(f|F) *= *('|\")?(\\w|\\\\|\\/|\\.)+('|\"| *|>)?";
+    //提取信息中的邮件地址:
+    public static final String REGEX_EXTRACT_EMAIL = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*";
+    //提取信息中的图片链接:
+    public static final String REGEX_EXTRACT_IMAGE_LINK = "(s|S)(r|R)(c|C) *= *('|\")?(\\w|\\\\|\\/|\\.)+('|\"| *|>)?";
+    //提取信息中的IP地址:
+    public static final String REGEX_EXTRACT_IP = "(\\d+)\\.(\\d+)\\.(\\d+)\\.(\\d+)";
+    //提取信息中的中国电话号码（包括移动和固定电话）:
+    public static final String REGEX_EXTRACT_PHONE = "(\\(\\d{3,4}\\)|\\d{3,4}-|\\s)?\\d{7,14}";
+    //提取信息中的中国邮政编码:
+    public static final String REGEX_EXTRACT_POSTAL_CODE = "[1-9]{1}(\\d+){5}";
+    //提取信息中的中国身份证号码:
+    public static final String REGEX_EXTRACT_IDCARD = "\\d{18}|\\d{15}";
+    //提取信息中的整数：
+    public static final String REGEX_EXTRACT_INTEGER = "\\d+";
+    //提取信息中的浮点数（即小数）：
+    public static final String REGEX_EXTRACT_DECIMAL = "(-?\\d*)\\.?\\d+";
+    //提取信息中的任何数字 ：(-?\d*)(\.\d+)?
+    public static final String REGEX_EXTRACT_ANY_NUMBER = "(-?\\d*)(\\.\\d+)?";
+    //提取信息中的中文字符串：[\u4e00-\u9fa5]*
+    public static final String REGEX_EXTRACT_CHINESE_STRING = "[\\u4e00-\\u9fa5]*";
+    //提取信息中的双字节字符串 (汉字)：[^\x00-\xff]*
+    public static final String REGEX_EXTRACT_DOUBLE_BYTE_STRING = "[\\u4e00-\\u9fa5]*";
+
+
     /**
      * 正则：电话号码
      */

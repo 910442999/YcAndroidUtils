@@ -17,7 +17,6 @@ import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.time.temporal.ValueRange;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -70,6 +69,10 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * string2InputStream          : string转inputStream按编码
  * outputStream2String         : outputStream转string按编码
  * string2OutputStream         : string转outputStream按编码
+ * format2Decimals                将字符串格式化为带两位小数的字符串 四舍五入
+ * format2Decimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+ * format2Decimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+ * formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
  */
 public class YcDataConversionUtils {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -1061,7 +1064,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 四舍五入
+     * 将数值四舍五入
      *
      * @param value 数值
      * @param digit 保留小数位
@@ -1072,30 +1075,30 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 四舍五入
+     * 自定义四舍五入模式
      *
      * @param value 数值
      * @param digit 保留小数位
      * @return
      */
-    public static String getRoundUp(double value, int digit) {
+    public static String getRoundUp(double value, int digit, int roundingMode) {
         BigDecimal result = new BigDecimal(value);
-        return result.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
+        return result.setScale(digit, roundingMode).toString();
     }
 
     /**
-     * 四舍五入
+     * 自定义四舍五入模式
      *
      * @param value 数值
      * @param digit 保留小数位
      * @return
      */
-    public static String getRoundUp(String value, int digit) {
+    public static String getRoundUp(String value, int digit, int roundingMode) {
         if (isNullString(value)) {
             return "0";
         }
-        BigDecimal result = new BigDecimal(Double.parseDouble(value));
-        return result.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
+        BigDecimal result = new BigDecimal(value);
+        return result.setScale(digit, roundingMode).toString();
     }
 
     /**
@@ -1114,23 +1117,12 @@ public class YcDataConversionUtils {
      * 获取百分比（乘100）
      *
      * @param value 数值
-     * @param digit 保留小数位
+     * @param digit 保留小数的位数
      * @return
      */
     public static String getPercentValue(double value, int digit) {
         BigDecimal result = new BigDecimal(value);
         return getPercentValue(result, digit);
-    }
-
-    /**
-     * 获取百分比（乘100,保留两位小数）
-     *
-     * @param value 数值
-     * @return
-     */
-    public static String getPercentValue(double value) {
-        BigDecimal result = new BigDecimal(value);
-        return getPercentValue(result, 2);
     }
 
     /**

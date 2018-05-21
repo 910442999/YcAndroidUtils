@@ -11,6 +11,20 @@ import com.yc.yclibrary.view.glide.YcGlideRoundTransform;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+
+/**
+ * Glide加载网络图片相关
+ * <p>
+ * loadImageView       加载网络图片
+ * LoadingThumbnails   缩略图支持
+ * loadingGif          加载gif图片
+ * loadFilletImage     加载网络圆角图片
+ * loadCircleImage     加载网络圆型图片
+ * loadLocal           加载本地图片
+ * loadCrossFade       加载图片带淡入淡出的动画效果
+ * loadingBlurformation    加载一个图片为高斯模糊效果
+ * loadingClean            清理磁盘的缓存
+ */
 public class YcGlideUtils {
 
     /**
@@ -84,10 +98,11 @@ public class YcGlideUtils {
      * @param url
      * @param imageView
      */
-    public static void loadFilletImage(Context context, String url, ImageView imageView,int circular_bead) {
-        Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new YcGlideRoundTransform(context,circular_bead))).into(imageView);
+    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead) {
+        Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new YcGlideRoundTransform(context, circular_bead))).into(imageView);
     }
- /**
+
+    /**
      * 加载网络圆型图片
      *
      * @param url
@@ -166,7 +181,7 @@ public class YcGlideUtils {
     /**
      * 清理磁盘的缓存
      *
-     * @param context  applicationContext  全局上下文
+     * @param context applicationContext  全局上下文
      */
     public static void loadingClean(Context context) {
         try {
@@ -176,19 +191,18 @@ public class YcGlideUtils {
         }
     }
 
- /**
+    /**
      * 加载一个图片为高斯模糊效果
      *
-     * @param context  applicationContext  全局上下文
+     * @param context applicationContext  全局上下文
      */
-    public static void loadingBlurformation(Context context,String url, ImageView imageView) {
+    public static void loadingBlurformation(Context context, String url, ImageView imageView) {
         try {
             Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new YcGlideBlurformation(context))).into(imageView);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
 }

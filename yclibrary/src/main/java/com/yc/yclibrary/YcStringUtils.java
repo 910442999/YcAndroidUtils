@@ -8,6 +8,16 @@ import static com.yc.yclibrary.YcConstUtils.*;
 import static com.yc.yclibrary.YcConstUtils.KB;
 import static com.yc.yclibrary.YcConstUtils.MB;
 
+/**
+ * 字符串相关 YcStringUtils
+ * isEmpty         : 判断字符串是否为 null 或长度为 0
+ * isTrimEmpty     : 判断字符串是否为 null 或全为空格
+ * equals          : 判断两字符串是否相等
+ * equalsIgnoreCase: 判断两字符串忽略大小写是否相等
+ * null2Length0    : null 转为长度为 0 的字符串
+ * length          : 返回字符串长度
+ */
+
 public class YcStringUtils {
 
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -155,6 +165,7 @@ public class YcStringUtils {
         }
         return ret;
     }
+
     /**
      * hexChar转int
      *

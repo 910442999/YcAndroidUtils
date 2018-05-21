@@ -8,8 +8,6 @@ import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.NumberFormat;
 
-import static org.junit.Assert.*;
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -91,6 +89,12 @@ public class ExampleUnitTest {
         //        DecimalFormat df = new DecimalFormat(stringBuilder.toString());
         //        System.out.println(df.format(str));
         //---------------------------------
+
+        System.out.println(BigDecimal.ROUND_HALF_UP==4);
+
+        System.out.println( new BigDecimal(str).setScale(12, BigDecimal.ROUND_HALF_UP).toString() );
+//        System.out.println( new BigDecimal(str2).setScale(25, BigDecimal.ROUND_HALF_UP).toString());
+
 
         DecimalFormat formater = new DecimalFormat();
         formater.setMaximumFractionDigits(2);

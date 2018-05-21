@@ -9,10 +9,16 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 /**
- *
- * @author vondear
- * @date 2016/1/24
  * 编码解码相关工具类
+ * <p>
+ * urlEncode                   : URL编码
+ * urlDecode                   : URL解码
+ * base64Encode                : Base64编码
+ * base64Encode2String         : Base64编码
+ * base64Decode                : Base64解码
+ * base64UrlSafeEncode         : Base64URL安全编码
+ * htmlEncode                  : Html编码
+ * htmlDecode                  : Html解码
  */
 public class YcEncodeUtils {
 

@@ -17,8 +17,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * @author vondear
- * @date 2016/1/24
+ 状态栏: YcStatusBarUtils
+ 快速实现沉浸式状态栏（支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android）。
+ 快速设置状态栏为黑色或白色字体图标（支持 4.4 以上版本 MIUI 和 Flyme，以及 6.0 以上版本的其他 Android）。
+ 提供多个常用的工具方法，如获取状态栏高度、判断当前是否全屏等等。
  */
 public class YcStatusBarUtils {
 
