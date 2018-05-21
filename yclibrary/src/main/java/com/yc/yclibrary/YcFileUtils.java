@@ -1924,7 +1924,7 @@ public class YcFileUtils {
      */
     public static Uri getUriForFile(Context mContext, File file) {
         Uri fileUri = null;
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fileUri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".fileprovider", file);
         } else {
             fileUri = Uri.fromFile(file);

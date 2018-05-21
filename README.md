@@ -472,23 +472,81 @@ loadingClean            清理磁盘的缓存
 
 #-------------------------------------------------
 
- * Yc工具类 YcUtils
- * getContext 获取 Context
- * dip2px   dip转px
- * dp2px    dp转px
- * px2dip   px转dip
- * px2dp    px转dp
- * sp2px     sp转px
- * px2sp     px转sp
- * getRsString      获取string 资源文件
- * getRsDrawable    获取 Drawable 资源文件
- * getRsColor       获取 Color 资源文件
- * delayToDo        延迟任务
- * countDown        倒计时
- * setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
- * setEdType        设置光标输入位置
- * getSystemLanguage 获取系统语言
- * changeAppLanguage 更改App语言
+  Yc工具类 YcUtils
+  getContext 获取 Context
+  dip2px   dip转px
+  dp2px    dp转px
+  px2dip   px转dip
+  px2dp    px转dp
+  sp2px     sp转px
+  px2sp     px转sp
+  getRsString      获取string 资源文件
+  getRsDrawable    获取 Drawable 资源文件
+  getRsColor       获取 Color 资源文件
+  delayToDo        延迟任务
+  countDown        倒计时
+  setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
+  setEdType        设置光标输入位置
+  getSystemLanguage 获取系统语言
+  changeAppLanguage 更改App语言
+
+#-------------------------------------------------
+  Intent相关 YcIntentUtils
+  <p>
+  getInstallAppIntent         : 获取安装App(支持7.0)的意图
+  getUninstallAppIntent       : 获取卸载App的意图
+  getLaunchAppIntent           : 获取打开App的意图
+  getAppInfoIntent            : 获取App信息的意图
+  getShareInfoIntent          : 获取App信息分享的意图
+  getIntentByPackageName      : 根据包名获取意图
+  getComponentNameIntent      : 获取其他应用的Intent
+  getAppDetailsSettingsIntent: 获取 App 具体设置的意图
+  getShareTextIntent         : 获取分享文本的意图
+  getShareImageIntent        : 获取分享图片的意图
+  getComponentIntent         : 获取其他应用组件的意图
+  getShutdownIntent          : 获取关机的意图
+  getCaptureIntent           : 获取拍照的意图
+#-------------------------------------------------
+
+  Shell相关工具类(是否root) YcShellUtils
+  <p>
+  isRoot                      : 判断设备是否root
+  execCmd                     : 是否是在root下执行命令
+
+#-------------------------------------------------
+
+ 进程相关 YcProcessUtils
+ getForegroundProcessName    : 获取前台线程包名
+ getAllBackgroundProcesses   : 获取后台服务进程
+ killAllBackgroundProcesses  : 杀死所有后台服务进程
+ killBackgroundProcesses     : 杀死后台服务进程
+
+#-------------------------------------------------
+
+ * 应用相关 ->YcAppUtils
+ * InstallAPK                  : 安装APK
+ * installApp                  : 安装 App（支持 8.0）
+ * installAppSilent            : 静默安装App
+ * uninstallApp                : 卸载App
+ * uninstallAppSilent          : 静默卸载App
+ * isAppRoot                   : 判断App是否有root权限
+ * launchApp                   : 打开App
+ * getAppPackageName           : 获取App包名
+ * getAppDetailsSettings       : 获取App具体设置
+ * getAppName                  : 获取App名称
+ * getAppIcon                  : 获取App图标
+ * getAppPath                  : 获取App路径
+ * getAppVersionName           : 获取App版本号
+ * getAppVersionCode           : 获取App版本码
+ * isSystemApp                 : 判断App是否是系统应用
+ * isAppDebug                  : 判断App是否是Debug版本
+ * getAppSignature             : 获取App签名
+ * getAppSignatureSHA1         : 获取应用签名的的SHA1值
+ * isInstallApp                : 判断App是否安装
+ * getAppInfo                  : 获取当前App信息
+ * getBean                     : 得到AppInfo的Bean
+ * getAllAppsInfo              : 获取所有已安装App信息
+ * isAppBackground             : 判断当前App处于前台还是后台
 
 #-------------------------------------------------
 

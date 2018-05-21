@@ -1,2 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yc.yclibrary" />
+    package="com.yc.yclibrary" >
+
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+
+</manifest>
