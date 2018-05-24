@@ -25,19 +25,12 @@ public class ExampleUnitTest {
         double v7 = 5426334523454563.012332111222;
         double v8 = 3454563.222332111222;
         double v9 = 5426334.012332111222;
-        System.out.println(v9 + "");
-        Format format = new DecimalFormat();
-        //        format.
-        String addition = YcCalculationRelatedUtils.multiplication(v, v2);
-        System.out.println(addition);
-        double addition2 = YcCalculationRelatedUtils.multiplication(v6, v7);
-        System.out.println(addition2);
-        System.out.println(Double.toString(v8));
-        System.out.println(v8 + "");
+
         //        DecimalFormat df = new DecimalFormat("#.00");
-        DecimalFormat df = new DecimalFormat("#.0000000000000");
-        df.setMaximumFractionDigits(3);
+        DecimalFormat df = new DecimalFormat("#.000");
+        df.setMaximumFractionDigits(10);
         System.out.println(df.format(v7));
+
         NumberFormat numberFormat = NumberFormat.getNumberInstance();
         System.out.println(numberFormat.format(v8));
         System.out.println(String.format("%.4f", v8));
@@ -64,8 +57,14 @@ public class ExampleUnitTest {
 
     @Test
     public void test() {
-        Double str = 11111534534.00000000000000000000001222;
-        String str1 = "1111111111sdfghjklsdfghjkert";
+//        Double str = 11111534534.00000000000000000000001222;
+//        String str2 = "11111534534.00000000000000000000001222";
+
+         Double str = 0.000001;
+        String str2 = "0.000000000000000000000000000000001";
+
+
+//        String str = "1111111111sdfghjklsdfghjkert";
         //        int index = str.last IndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
         //        if (index > -1) {
         //
@@ -92,16 +91,22 @@ public class ExampleUnitTest {
 
         System.out.println(BigDecimal.ROUND_HALF_UP==4);
 
-        System.out.println( new BigDecimal(str).setScale(12, BigDecimal.ROUND_HALF_UP).toString() );
-//        System.out.println( new BigDecimal(str2).setScale(25, BigDecimal.ROUND_HALF_UP).toString());
+        System.out.println( new BigDecimal(str).setScale(12, BigDecimal.ROUND_FLOOR).toString() );
+
 
 
         DecimalFormat formater = new DecimalFormat();
         formater.setMaximumFractionDigits(2);
         formater.setGroupingSize(0);
         formater.setRoundingMode(RoundingMode.FLOOR);
-        System.out.println(formater.format(3.1415926));
-        String result = formater.format(3.1495926);
-        System.out.println(result);
+//        System.out.println(formater.format(str2));
+//        String result = formater.format("3.1495926");
+//        System.out.println(result);
+
+        DecimalFormat formater2 = new DecimalFormat("#0.0000000000");
+        formater2.setRoundingMode(RoundingMode.FLOOR);
+        System.out.println(formater2.format(str));
+//        System.out.println(formater2.format(str2));
+
     }
 }

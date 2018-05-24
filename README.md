@@ -134,12 +134,17 @@ YcCalculationRelatedUtils
   format2Decimals               将字符串格式化为 (自定义位数 ) 小数的字符串
   stringTwoLines                将字符串从中间对折显示两行
   hideCenterString              隐藏字符串中间的缺省
-  format2Decimals               将Double格式化为带两位小数的字符串
-  format2Decimals               保留字符串自定义的小数位数四舍五入 , 如果不够自定义的小数位数 则显示原来的数值
-  format2Decimals               将字符串格式化为带两位小数的字符串 四舍五入
-  format2Decimals               将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
-  format2Decimals               将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
-  formatDecimalsNoRounding      保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+  format2Decimals                将字符串格式化为带两位小数的字符串 四舍五入
+  formatDecimalsRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
+  formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+  formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+  formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+  <p>
+  formatNoRoundingDecimals
+  将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+  如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
+  如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
+  <p>
   getAmountValue                金额格式化
   getRoundUp                    将数值四舍五入
   getRoundUp                    将数值自定义四舍五入模式

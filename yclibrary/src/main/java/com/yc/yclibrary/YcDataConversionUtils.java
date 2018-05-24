@@ -70,9 +70,20 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * outputStream2String         : outputStream转string按编码
  * string2OutputStream         : string转outputStream按编码
  * format2Decimals                将字符串格式化为带两位小数的字符串 四舍五入
- * format2Decimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
- * format2Decimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+ * formatDecimalsRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
+ * formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+ * formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
  * formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+ * <p>
+ * formatNoRoundingDecimals
+ * 将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+ * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
+ * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
+ * <p>
+ * getAmountValue                金额格式化
+ * getRoundUp                    将数值四舍五入
+ * getRoundUp                    将数值自定义四舍五入模式
+ * getPercentValue               获取百分比（乘100）
  */
 public class YcDataConversionUtils {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -354,7 +365,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 将字符串格式化为带两位小数的字符串 四舍五入
      *
      * @param str 字符串
      * @return
@@ -374,10 +385,57 @@ public class YcDataConversionUtils {
      * @param str 字符串 "#0.00"
      * @return
      */
-    public static String format2Decimals(Double str, String digits) {
+    public static String formatDecimals(Double str, String digits) {
+        return formatDecimals(str, digits, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入
+     *
+     * @param digits 字符串 "#0.00"
+     * @return
+     */
+    public static String formatDecimals(String str, String digits) {
+        return formatDecimals(stringToDouble(str), digits, RoundingMode.FLOOR);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入 不够位数原值返回  够则取舍
+     *
+     * @param digits 小数位
+     * @return
+     */
+    public static String formatNoRoundingDecimals(String str, int digits) {
+        int i = judgingStringHasFewDecimal(str);
+        if (digits > i) {
+            return str;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("#0.");
+            for (int j = 0; j < digits; j++) {
+                stringBuilder.append("0");
+            }
+            return formatDecimals(stringToDouble(str), stringBuilder.toString(), RoundingMode.FLOOR);
+        }
+
+    }
+
+    /**
+     * formatNoRoundingDecimals
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+     * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
+     * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
+     *
+     * @param digits 字符串 "#0.00"
+     * @param FLOOR  舍入模式 RoundingMode
+     * @return
+     */
+    public static String formatDecimals(Double str, String digits, RoundingMode FLOOR) {
         DecimalFormat df = new DecimalFormat(digits);
+        df.setRoundingMode(FLOOR);
         return df.format(str);
     }
+
 
     /**
      * 将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
@@ -386,8 +444,8 @@ public class YcDataConversionUtils {
      * @param digits  保留的小数点的位数
      * @return
      */
-    public static String format2Decimals(Double aDouble, int digits) {
-        return format2Decimals(aDouble, digits, 0);
+    public static String formatDecimals(Double aDouble, int digits) {
+        return formatDecimals(aDouble, digits, 0);
     }
 
     /**
@@ -398,12 +456,12 @@ public class YcDataConversionUtils {
      * @param groupingSize
      * @return
      */
-    public static String format2Decimals(Double aDouble, int digits, int groupingSize) {
-        return format2Decimals(aDouble, digits, groupingSize, RoundingMode.FLOOR);
+    public static String formatDecimals(Double aDouble, int digits, int groupingSize) {
+        return formatDecimals(aDouble, digits, groupingSize, RoundingMode.FLOOR);
     }
 
     /**
-     * 将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入 如果超出位数,小数点全是0.00000000 的时候   直接返回0
      *
      * @param aDouble
      * @param digits
@@ -411,7 +469,7 @@ public class YcDataConversionUtils {
      * @param FLOOR
      * @return
      */
-    public static String format2Decimals(Double aDouble, int digits, int groupingSize, RoundingMode FLOOR) {
+    public static String formatDecimals(Double aDouble, int digits, int groupingSize, RoundingMode FLOOR) {
         DecimalFormat formater = new DecimalFormat();
         formater.setMaximumFractionDigits(digits);
         formater.setGroupingSize(groupingSize);
@@ -477,7 +535,7 @@ public class YcDataConversionUtils {
      * @return
      */
 
-    public static String format2Decimals(String str, int digit, String digits) {
+    public static String formatDecimals(String str, int digit, String digits) {
 
         int i = judgingStringHasFewDecimal(str);
         if (digit > i) {
@@ -499,7 +557,7 @@ public class YcDataConversionUtils {
      * @return
      */
 
-    public static String format2Decimals(String str, int digit) {
+    public static String formatDecimalsRounding(String str, int digit) {
 
         int i = judgingStringHasFewDecimal(str);
         if (digit > i) {
@@ -532,7 +590,7 @@ public class YcDataConversionUtils {
         if (digit > i) {
             return str;
         } else {
-            return format2Decimals(stringToDouble(str), digit);
+            return formatDecimals(stringToDouble(str), digit);
         }
     }
 
