@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -75,8 +76,9 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
  * formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
  * <p>
- * formatNoRoundingDecimals
- * 将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+ * formatNoRoundingDecimals     将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入 不够位数原值返回  够则取舍
+ * <p>
+ * formatDecimals (三参)         将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
  * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
  * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
  * <p>
@@ -84,6 +86,8 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * getRoundUp                    将数值四舍五入
  * getRoundUp                    将数值自定义四舍五入模式
  * getPercentValue               获取百分比（乘100）
+ * baseToSubunit                 将字符串 乘 10 的几次方 (如 10的18次方)
+ * subunitToBase                 将大整形 除以 10 的 几次方
  */
 public class YcDataConversionUtils {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -421,7 +425,6 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * formatNoRoundingDecimals
      * 将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
      * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
      * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
@@ -1181,6 +1184,41 @@ public class YcDataConversionUtils {
     public static String getPercentValue(double value, int digit) {
         BigDecimal result = new BigDecimal(value);
         return getPercentValue(result, digit);
+    }
+
+    /**
+     * 将字符串 乘 10 的几次方
+     *
+     * Base - taken to mean default unit for a currency e.g. ETH, DOLLARS
+     * 基准 - 用于表示货币的默认单位，例如, ETH，美元
+     * Subunit - taken to mean subdivision of base e.g. WEI, CENTS
+     *亚基 - 用于表示基础的细分例如, WEI，CENTS
+     * @param baseAmountStr - decimal amonut in base unit of a given currency 以给定货币的基本单位计算十进制货币
+     * @param decimals - decimal places used to convert to subunits 小数位用于转换为亚单位
+     * @return amount in subunits   金额在亚基
+     */
+    public static BigInteger baseToSubunit(String baseAmountStr, int decimals) {
+        assert(decimals >= 0);
+        BigDecimal baseAmount = new BigDecimal(baseAmountStr);
+        BigDecimal subunitAmount = baseAmount.multiply(BigDecimal.valueOf(10).pow(decimals));
+        try {
+            return subunitAmount.toBigIntegerExact();
+        } catch (ArithmeticException ex) {
+            assert(false);
+            return subunitAmount.toBigInteger();
+        }
+    }
+
+    /**
+     * 将大整形 除以 10 的 几次方
+     *
+     * @param subunitAmount - amouunt in subunits 在亚基中是有限的
+     * @param decimals - decimal places used to convert subunits to base 小数位用于将子单位转换为基数
+     * @return amount in base units 金额以基本单位表示
+     */
+    public static BigDecimal subunitToBase(BigInteger subunitAmount, int decimals) {
+        assert(decimals >= 0);
+        return new BigDecimal(subunitAmount).divide(BigDecimal.valueOf(10).pow(decimals));
     }
 
     /**

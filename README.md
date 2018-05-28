@@ -139,9 +139,9 @@ YcCalculationRelatedUtils
   formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
   formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
   formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+  formatNoRoundingDecimals     将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入 不够位数原值返回  够则取舍
   <p>
-  formatNoRoundingDecimals
-  将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+  formatDecimals (三参)         将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
   如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
   如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
   <p>
@@ -149,6 +149,8 @@ YcCalculationRelatedUtils
   getRoundUp                    将数值四舍五入
   getRoundUp                    将数值自定义四舍五入模式
   getPercentValue               获取百分比（乘100）
+  baseToSubunit                 将字符串 乘 10 的几次方 (如 10的18次方)
+  subunitToBase                 将大整形 除以 10 的 几次方
 #-------------------------------------------------
 设备工具  YcDeviceUtils
 
