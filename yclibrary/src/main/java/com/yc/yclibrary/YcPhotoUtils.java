@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import java.text.SimpleDateFormat;
@@ -162,7 +163,7 @@ public class YcPhotoUtils {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             imageFilePath[0] = Uri.parse("");
-            YcToastUtils.showShort(YcUtils.getRsString(YcUtils.getContext(), R.string.read_write_permissions));
+            Toast.makeText(YcUtils.getContext(),YcUtils.getRsString(YcUtils.getContext(), R.string.read_write_permissions),Toast.LENGTH_SHORT).show();
         } else {
             String status = Environment.getExternalStorageState();
             SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.CHINA);

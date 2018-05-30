@@ -1,21 +1,27 @@
 package com.yc.yclibrary;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.CheckResult;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,311 +29,246 @@ import java.lang.ref.WeakReference;
 
 /**
  * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/09/29
- *     desc  : utils about toast
+ *
  * </pre>
  */
 public final class YcToastUtils {
 
-    private static final int     COLOR_DEFAULT = 0xFEFFFFFF;
-    private static final Handler HANDLER       = new Handler(Looper.getMainLooper());
+    @ColorInt
+    private static final int DEFAULT_TEXT_COLOR = Color.parseColor("#FFFFFF");
 
-    private static WeakReference<Toast> sWeakToast;
-    private static int sGravity     = -1;
-    private static int sXOffset     = -1;
-    private static int sYOffset     = -1;
-    private static int sBgColor     = COLOR_DEFAULT;
-    private static int sBgResource  = -1;
-    private static int sMsgColor    = COLOR_DEFAULT;
-    private static int sMsgTextSize = -1;
+    @ColorInt
+    private static final int ERROR_COLOR = Color.parseColor("#FD4C5B");
 
-    private YcToastUtils() {
-        throw new UnsupportedOperationException("u can't instantiate me...");
+    @ColorInt
+    private static final int INFO_COLOR = Color.parseColor("#3F51B5");
+
+    @ColorInt
+    private static final int SUCCESS_COLOR = Color.parseColor("#388E3C");
+
+    @ColorInt
+    private static final int WARNING_COLOR = Color.parseColor("#FFA900");
+
+    private static final String TOAST_TYPEFACE = "sans-serif-condensed";
+
+    private static Toast currentToast;
+
+    //*******************************************普通 使用ApplicationContext 方法*********************
+    /**
+     * Toast 替代方法 ：立即显示无需等待
+     */
+    private static Toast mToast;
+    private static long mExitTime;
+
+    //*******************************************常规方法********************************************
+
+
+    @CheckResult
+    public static Toast normal(@NonNull Context context, @NonNull String message) {
+        return normal(context, message, Toast.LENGTH_SHORT, null, false);
     }
 
-    /**
-     * Set the gravity.
-     *
-     * @param gravity The gravity.
-     * @param xOffset X-axis offset, in pixel.
-     * @param yOffset Y-axis offset, in pixel.
-     */
-    public static void setGravity(final int gravity, final int xOffset, final int yOffset) {
-        sGravity = gravity;
-        sXOffset = xOffset;
-        sYOffset = yOffset;
+    @CheckResult
+    public static Toast normal(@NonNull Context context, @NonNull String message, Drawable icon) {
+        return normal(context, message, Toast.LENGTH_SHORT, icon, true);
     }
 
-    /**
-     * Set the color of background.
-     *
-     * @param backgroundColor The color of background.
-     */
-    public static void setBgColor(@ColorInt final int backgroundColor) {
-        sBgColor = backgroundColor;
+    @CheckResult
+    public static Toast normal(@NonNull Context context, @NonNull String message, int duration) {
+        return normal(context, message, duration, null, false);
     }
 
-    /**
-     * Set the resource of background.
-     *
-     * @param bgResource The resource of background.
-     */
-    public static void setBgResource(@DrawableRes final int bgResource) {
-        sBgResource = bgResource;
+    @CheckResult
+    public static Toast normal(@NonNull Context context, @NonNull String message, int duration, Drawable icon) {
+        return normal(context, message, duration, icon, true);
     }
 
-    /**
-     * Set the color of message.
-     *
-     * @param msgColor The color of message.
-     */
-    public static void setMsgColor(@ColorInt final int msgColor) {
-        sMsgColor = msgColor;
+    @CheckResult
+    public static Toast normal(@NonNull Context context, @NonNull String message, int duration, Drawable icon, boolean withIcon) {
+        return custom(context, message, icon, DEFAULT_TEXT_COLOR, duration, withIcon);
     }
 
-    /**
-     * Set the text size of message.
-     *
-     * @param textSize The text size of message.
-     */
-    public static void setMsgTextSize(final int textSize) {
-        sMsgTextSize = textSize;
+    @CheckResult
+    public static Toast warning(@NonNull Context context, @NonNull String message) {
+        return warning(context, message, Toast.LENGTH_SHORT, true);
     }
 
-    /**
-     * Show the toast for a short period of time.
-     *
-     * @param text The text.
-     */
-    public static void showShort(@NonNull final CharSequence text) {
-        show(text, Toast.LENGTH_SHORT);
+    @CheckResult
+    public static Toast warning(@NonNull Context context, @NonNull String message, int duration) {
+        return warning(context, message, duration, true);
     }
 
-    /**
-     * Show the toast for a short period of time.
-     *
-     * @param resId The resource id for text.
-     */
-    public static void showShort(@StringRes final int resId) {
-        show(resId, Toast.LENGTH_SHORT);
+    @CheckResult
+    public static Toast warning(@NonNull Context context, @NonNull String message, int duration, boolean withIcon) {
+        return custom(context, message, getDrawable(context, R.drawable.ic_error_outline_white_48dp), DEFAULT_TEXT_COLOR, WARNING_COLOR, duration, withIcon, true);
     }
 
+    @CheckResult
+    public static Toast info(@NonNull Context context, @NonNull String message) {
+        return info(context, message, Toast.LENGTH_SHORT, true);
+    }
+
+    @CheckResult
+    public static Toast info(@NonNull Context context, @NonNull String message, int duration) {
+        return info(context, message, duration, true);
+    }
+
+    @CheckResult
+    public static Toast info(@NonNull Context context, @NonNull String message, int duration, boolean withIcon) {
+        return custom(context, message, getDrawable(context, R.drawable.ic_info_outline_white_48dp), DEFAULT_TEXT_COLOR, INFO_COLOR, duration, withIcon, true);
+    }
+
+    @CheckResult
+    public static Toast success(@NonNull Context context, @NonNull String message) {
+        return success(context, message, Toast.LENGTH_SHORT, true);
+    }
+
+    @CheckResult
+    public static Toast success(@NonNull Context context, @NonNull String message, int duration) {
+        return success(context, message, duration, true);
+    }
+
+    @CheckResult
+    public static Toast success(@NonNull Context context, @NonNull String message, int duration, boolean withIcon) {
+        return custom(context, message, getDrawable(context, R.drawable.ic_check_white_48dp), DEFAULT_TEXT_COLOR, SUCCESS_COLOR, duration, withIcon, true);
+    }
+
+    @CheckResult
+    public static Toast error(@NonNull Context context, @NonNull String message) {
+        return error(context, message, Toast.LENGTH_SHORT, true);
+    }
+
+    //===========================================常规方法============================================
+
+    @CheckResult
+    public static Toast error(@NonNull Context context, @NonNull String message, int duration) {
+        return error(context, message, duration, true);
+    }
+
+    @CheckResult
+    public static Toast error(@NonNull Context context, @NonNull String message, int duration, boolean withIcon) {
+        return custom(context, message, getDrawable(context, R.drawable.ic_clear_white_48dp), DEFAULT_TEXT_COLOR, ERROR_COLOR, duration, withIcon, true);
+    }
+
+    @CheckResult
+    public static Toast custom(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, int duration, boolean withIcon) {
+        return custom(context, message, icon, textColor, -1, duration, withIcon, false);
+    }
+
+    //*******************************************内需方法********************************************
+
+    @CheckResult
+    public static Toast custom(@NonNull Context context, @NonNull String message, @DrawableRes int iconRes, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint) {
+        return custom(context, message, getDrawable(context, iconRes), textColor, tintColor, duration, withIcon, shouldTint);
+    }
+
+    //左侧图标
+    @CheckResult
+    public static Toast custom(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint) {
+        return customize(context, message, icon, textColor, tintColor, duration, withIcon, shouldTint, R.layout.toast_layout, false);
+    }
+
+    //*************************************** 自定义  上方图标  start *******************************************
+    public static Toast showToastAnimator(@NonNull Context context, @NonNull String message, Drawable icon) {
+        return customize(context, message, icon, DEFAULT_TEXT_COLOR, -1, Toast.LENGTH_SHORT, true, false, R.layout.customize_toast_layout, true);
+    }
+
+    public static Toast showToast(@NonNull Context context, @NonNull String message, Drawable icon) {
+        return customize(context, message, icon, DEFAULT_TEXT_COLOR, -1, Toast.LENGTH_SHORT, true, false, R.layout.customize_toast_layout, false);
+    }
+
+    public static Toast showToast(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor) {
+        return customize(context, message, icon, textColor, -1, Toast.LENGTH_SHORT, true, false, R.layout.customize_toast_layout, false);
+    }
+
+
+    public static Toast showToast(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint) {
+        return customize(context, message, icon, textColor, tintColor, Toast.LENGTH_SHORT, true, false, R.layout.customize_toast_layout, false);
+    }
+
+    //*************************************** 自定义  上方图标  end *******************************************
+
     /**
-     * Show the toast for a short period of time.
+     * 自定义图标位置
      *
-     * @param resId The resource id for text.
-     * @param args  The args.
+     * @param context
+     * @param message
+     * @param icon
+     * @param textColor
+     * @param tintColor
+     * @param duration
+     * @param withIcon
+     * @param shouldTint
+     * @param resource
+     * @return
      */
-    public static void showShort(@StringRes final int resId, final Object... args) {
-        if (args != null && args.length == 0) {
-            show(resId, Toast.LENGTH_SHORT);
+    @CheckResult
+    public static Toast customize(@NonNull Context context, @NonNull String message, Drawable icon, @ColorInt int textColor, @ColorInt int tintColor, int duration, boolean withIcon, boolean shouldTint, int resource, boolean iconAnimator) {
+        if (currentToast == null) {
+            currentToast = new Toast(context);
+        }
+        final View toastLayout = ((LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(resource, null);
+        final ImageView toastIcon = (ImageView) toastLayout.findViewById(R.id.toast_icon);
+        final TextView toastTextView = (TextView) toastLayout.findViewById(R.id.toast_text);
+        Drawable drawableFrame;
+
+        if (shouldTint) {
+            drawableFrame = tint9PatchDrawableFrame(context, tintColor);
         } else {
-            show(resId, Toast.LENGTH_SHORT, args);
+            drawableFrame = getDrawable(context, R.drawable.toast_frame);
         }
+        setBackground(toastLayout, drawableFrame);
+
+        if (withIcon) {
+            if (icon == null)
+                throw new IllegalArgumentException("Avoid passing 'icon' as null if 'withIcon' is set to true");
+            setBackground(toastIcon, icon);
+            if (iconAnimator)
+                ObjectAnimator.ofFloat(toastIcon, "rotationY", 0, 360).setDuration(1000).start();
+        } else
+            toastIcon.setVisibility(View.GONE);
+
+        toastTextView.setTextColor(textColor);
+        toastTextView.setText(message);
+        toastTextView.setTypeface(Typeface.create(TOAST_TYPEFACE, Typeface.NORMAL));
+
+        currentToast.setView(toastLayout);
+        currentToast.setDuration(duration);
+        currentToast.setGravity(Gravity.BOTTOM, 0, 400);
+        return currentToast;
     }
 
-    /**
-     * Show the toast for a short period of time.
-     *
-     * @param format The format.
-     * @param args   The args.
-     */
-    public static void showShort(final String format, final Object... args) {
-        if (args != null && args.length == 0) {
-            show(format, Toast.LENGTH_SHORT);
-        } else {
-            show(format, Toast.LENGTH_SHORT, args);
+    public static final Drawable tint9PatchDrawableFrame(@NonNull Context context, @ColorInt int tintColor) {
+        final NinePatchDrawable toastDrawable = (NinePatchDrawable) getDrawable(context, R.drawable.toast_frame);
+        toastDrawable.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN));
+        return toastDrawable;
+    }
+    //===========================================内需方法============================================
+
+
+    //******************************************系统 Toast 替代方法***************************************
+
+    public static final void setBackground(@NonNull View view, Drawable drawable) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            view.setBackground(drawable);
+        else
+            view.setBackgroundDrawable(drawable);
+    }
+
+    public static final Drawable getDrawable(@NonNull Context context, @DrawableRes int id) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+            return context.getDrawable(id);
+        else
+            return context.getResources().getDrawable(id);
+    }
+
+
+    public static boolean doubleClickExit(@NonNull Context context) {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            YcToastUtils.normal(context, "再按一次退出");
+            mExitTime = System.currentTimeMillis();
+            return false;
         }
-    }
-
-    /**
-     * Show the toast for a long period of time.
-     *
-     * @param text The text.
-     */
-    public static void showLong(@NonNull final CharSequence text) {
-        show(text, Toast.LENGTH_LONG);
-    }
-
-    /**
-     * Show the toast for a long period of time.
-     *
-     * @param resId The resource id for text.
-     */
-    public static void showLong(@StringRes final int resId) {
-        show(resId, Toast.LENGTH_LONG);
-    }
-
-    /**
-     * Show the toast for a long period of time.
-     *
-     * @param resId The resource id for text.
-     * @param args  The args.
-     */
-    public static void showLong(@StringRes final int resId, final Object... args) {
-        if (args != null && args.length == 0) {
-            show(resId, Toast.LENGTH_SHORT);
-        } else {
-            show(resId, Toast.LENGTH_LONG, args);
-        }
-    }
-
-    /**
-     * Show the toast for a long period of time.
-     *
-     * @param format The format.
-     * @param args   The args.
-     */
-    public static void showLong(final String format, final Object... args) {
-        if (args != null && args.length == 0) {
-            show(format, Toast.LENGTH_SHORT);
-        } else {
-            show(format, Toast.LENGTH_LONG, args);
-        }
-    }
-
-    /**
-     * Show custom toast for a short period of time.
-     *
-     * @param layoutId ID for an XML layout resource to load.
-     */
-    public static View showCustomShort(@LayoutRes final int layoutId) {
-        final View view = getView(layoutId);
-        show(view, Toast.LENGTH_SHORT);
-        return view;
-    }
-
-    /**
-     * Show custom toast for a long period of time.
-     *
-     * @param layoutId ID for an XML layout resource to load.
-     */
-    public static View showCustomLong(@LayoutRes final int layoutId) {
-        final View view = getView(layoutId);
-        show(view, Toast.LENGTH_LONG);
-        return view;
-    }
-
-    /**
-     * Cancel the toast.
-     */
-    public static void cancel() {
-        final Toast toast;
-        if (sWeakToast != null && (toast = sWeakToast.get()) != null) {
-            toast.cancel();
-            sWeakToast = null;
-        }
-    }
-
-    private static void show(@StringRes final int resId, final int duration) {
-        show(YcUtils.getContext().getResources().getText(resId).toString(), duration);
-    }
-
-    private static void show(@StringRes final int resId, final int duration, final Object... args) {
-        show(String.format(YcUtils.getContext().getResources().getString(resId), args), duration);
-    }
-
-    private static void show(final String format, final int duration, final Object... args) {
-        show(String.format(format, args), duration);
-    }
-
-    private static void show(final CharSequence text, final int duration) {
-        HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                cancel();
-                final Toast toast = Toast.makeText(YcUtils.getContext(), text, duration);
-                sWeakToast = new WeakReference<>(toast);
-                final TextView tvMessage = toast.getView().findViewById(android.R.id.message);
-                int msgColor = tvMessage.getCurrentTextColor();
-                //it solve the font of toast
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    tvMessage.setTextAppearance(android.R.style.TextAppearance);
-                } else {
-                    tvMessage.setTextAppearance(tvMessage.getContext(), android.R.style.TextAppearance);
-                }
-                if (sMsgColor != COLOR_DEFAULT) {
-                    tvMessage.setTextColor(sMsgColor);
-                } else {
-                    tvMessage.setTextColor(msgColor);
-                }
-                if (sMsgTextSize != -1) {
-                    tvMessage.setTextSize(sMsgTextSize);
-                }
-                if (sGravity != -1 || sXOffset != -1 || sYOffset != -1) {
-                    toast.setGravity(sGravity, sXOffset, sYOffset);
-                }
-                setBg(toast, tvMessage);
-                toast.show();
-            }
-        });
-    }
-
-    private static void show(final View view, final int duration) {
-        HANDLER.post(new Runnable() {
-            @Override
-            public void run() {
-                cancel();
-                final Toast toast = new Toast(YcUtils.getContext());
-                sWeakToast = new WeakReference<>(toast);
-
-                toast.setView(view);
-                toast.setDuration(duration);
-                if (sGravity != -1 || sXOffset != -1 || sYOffset != -1) {
-                    toast.setGravity(sGravity, sXOffset, sYOffset);
-                }
-                setBg(toast);
-                toast.show();
-            }
-        });
-    }
-
-    private static void setBg(final Toast toast) {
-        final View toastView = toast.getView();
-        if (sBgResource != -1) {
-            toastView.setBackgroundResource(sBgResource);
-        } else if (sBgColor != COLOR_DEFAULT) {
-            Drawable background = toastView.getBackground();
-            if (background != null) {
-                background.setColorFilter(
-                        new PorterDuffColorFilter(sBgColor, PorterDuff.Mode.SRC_IN)
-                );
-            } else {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    toastView.setBackground(new ColorDrawable(sBgColor));
-                } else {
-                    toastView.setBackgroundDrawable(new ColorDrawable(sBgColor));
-                }
-            }
-        }
-    }
-
-    private static void setBg(final Toast toast, final TextView tvMsg) {
-        View toastView = toast.getView();
-        if (sBgResource != -1) {
-            toastView.setBackgroundResource(sBgResource);
-            tvMsg.setBackgroundColor(Color.TRANSPARENT);
-        } else if (sBgColor != COLOR_DEFAULT) {
-            Drawable tvBg = toastView.getBackground();
-            Drawable msgBg = tvMsg.getBackground();
-            if (tvBg != null && msgBg != null) {
-                tvBg.setColorFilter(new PorterDuffColorFilter(sBgColor, PorterDuff.Mode.SRC_IN));
-                tvMsg.setBackgroundColor(Color.TRANSPARENT);
-            } else if (tvBg != null) {
-                tvBg.setColorFilter(new PorterDuffColorFilter(sBgColor, PorterDuff.Mode.SRC_IN));
-            } else if (msgBg != null) {
-                msgBg.setColorFilter(new PorterDuffColorFilter(sBgColor, PorterDuff.Mode.SRC_IN));
-            } else {
-                toastView.setBackgroundColor(sBgColor);
-            }
-        }
-    }
-
-    private static View getView(@LayoutRes final int layoutId) {
-        LayoutInflater inflate =
-                (LayoutInflater) YcUtils.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        return inflate != null ? inflate.inflate(layoutId, null) : null;
+        return true;
     }
 }

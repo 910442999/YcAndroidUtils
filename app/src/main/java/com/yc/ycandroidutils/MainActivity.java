@@ -1,5 +1,6 @@
 package com.yc.ycandroidutils;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -44,8 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.text2:
 
-                //  YcToastUtils.showShort(YcSPUtils.getInstance().getString("name"));
-
+                startActivity(new Intent(this, YcToastUtilsActivity.class));
                 break;
         }
     }
