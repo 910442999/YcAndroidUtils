@@ -2,6 +2,7 @@ package com.yc.yclibrary;
 
 import android.support.annotation.Nullable;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 
 import static com.yc.yclibrary.YcConstUtils.*;
@@ -16,10 +17,18 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * equalsIgnoreCase: 判断两字符串忽略大小写是否相等
  * null2Length0    : null 转为长度为 0 的字符串
  * length          : 返回字符串长度
+ * byte2FitSize     字节数转合适大小
+ * bytes2HexString  byteArr转hexString
+ * hexString2Bytes  hexString转byteArr
+ * hex2Dec          hexChar转int
+ * ExistOtherChar   判断字符串中是否出现非数字字符，如果出现非数字字符，返回true，否则返回false
+ * decode           将十六进制字符串解码成字符串
+ * hexStr2Str       将16进制字符串转化为10进制字符串
+ * toStringHex      将16进制字符串转化为10进制字符串
  */
 
 public class YcStringUtils {
-
+    public static String hexString = "0123456789ABCDEF";
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
             'A', 'B', 'C', 'D', 'E', 'F'};
 
@@ -38,6 +47,7 @@ public class YcStringUtils {
     public static boolean isEmpty(@Nullable CharSequence str) {
         return str == null || str.length() == 0 || "null".equals(str);
     }
+
     /**
      * Return whether the string is null or whitespace.
      *
@@ -180,5 +190,77 @@ public class YcStringUtils {
             throw new IllegalArgumentException();
         }
     }
+    /*判断字符串中是否出现非数字字符，如果出现非数字字符，返回true，否则返回false*/
 
+    public static boolean ExistOtherChar(String str) {
+        String numstr = "0123456789";
+        int i = 0;
+        for (i = 0; i < str.length(); i++) {
+            if (numstr.indexOf(str.charAt(i)) == -1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /*将十六进制字符串解码成字符串*/
+
+
+    public static String decode(String bytes)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(bytes.length() / 2);
+        //将每2位16进制整数组装成一个字节
+        for (int i = 0; i < bytes.length(); i += 2)
+            baos.write((hexString.indexOf(bytes.charAt(i)) << 4 | hexString.indexOf(bytes.charAt(i + 1))));
+        return new String(baos.toByteArray());
+    }
+    /*将字符串转化为16进制，存入字符串数组中*/
+
+
+    public static String string2Hex(String content) {
+        byte[] bytes = content.getBytes();
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        for (int i = 0; i < bytes.length; i++) {
+            sb.append(hexString.charAt((bytes[i] & 0xf0) >> 4));
+            sb.append(hexString.charAt((bytes[i] & 0x0f) >> 0));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 将16进制字符串转化为10进制字符串
+     **/
+
+
+    public static String hexStr2Str(String hexStr) {
+        char[] hexs = hexStr.toCharArray();
+        byte[] bytes = new byte[hexStr.length() / 2];
+        int n;
+        for (int i = 0; i < bytes.length; i++) {
+            n = hexString.indexOf(hexs[2 * i]) * 16;
+            n += hexString.indexOf(hexs[2 * i + 1]);
+            bytes[i] = (byte) (n & 0xff);
+        }
+        return new String(bytes);
+    }
+
+    /*将16进制字符串转化为10进制字符串*/
+
+
+    public static String toStringHex(String s) {
+        byte[] baKeyword = new byte[s.length() / 2];
+        for (int i = 0; i < baKeyword.length; i++) {
+            try {
+                baKeyword[i] = (byte) (0xff & Integer.parseInt(s.substring(i * 2, i * 2 + 2), 16));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            s = new String(baKeyword, "utf-8");//UTF-16 le:Not
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return s;
+    }
 }

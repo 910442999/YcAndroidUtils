@@ -437,13 +437,21 @@ loadingClean            清理磁盘的缓存
 #-------------------------------------------------
 
   字符串相关 YcStringUtils
-  isEmpty         : 判断字符串是否为 null 或长度为 0
-  isTrimEmpty     : 判断字符串是否为 null 或全为空格
-  equals          : 判断两字符串是否相等
-  equalsIgnoreCase: 判断两字符串忽略大小写是否相等
-  null2Length0    : null 转为长度为 0 的字符串
-  length          : 返回字符串长度
 
+  isEmpty                判断字符串是否为 null 或长度为 0
+  isTrimEmpty            判断字符串是否为 null 或全为空格
+  equals                 判断两字符串是否相等
+  equalsIgnoreCase       判断两字符串忽略大小写是否相等
+  null2Length0           null 转为长度为 0 的字符串
+  length                 返回字符串长度
+  byte2FitSize           字节数转合适大小
+  bytes2HexString        byteArr转hexString
+  hexString2Bytes        hexString转byteArr
+  hex2Dec                hexChar转int
+  ExistOtherChar         判断字符串中是否出现非数字字符，如果出现非数字字符，返回true，否则返回false
+  decode                 将十六进制字符串解码成字符串
+  hexStr2Str             将16进制字符串转化为10进制字符串
+  toStringHex            将16进制字符串转化为10进制字符串
 #-------------------------------------------------
 
 时间相关 YcTimeUtils
@@ -557,5 +565,29 @@ loadingClean            清理磁盘的缓存
 
 #-------------------------------------------------
    事件传递相关   YcRxBus (类似于eventBus)
+
+#-------------------------------------------------
+
+ * Byte相关工具类
+ * <p>
+ * hexStringToByte      将16进制字符串转化为bytes数组
+ * bytesToHexString     将bytes数组转化为16进制字符串
+ * toByte               将Short Int类型转化为16进制再转化为byte数组
+ * int2Bytes            将INT类型转化为10进制byte数组（占4字节）
+ * intToHexToBytes      将int类型转化为16进制数，转化为byte数组类型
+ * intToHexToByte       将int类型转化为16进制数，转化为byte类型
+ * int2OneByte          将int类型转化为byte类型
+ * twoBytes2Int         将2个字节的byte数组转化为int类型
+ * oneByte2Int          将byte类型数转化为int类型
+ * byteToInt16          将16进制的byte类型转化为10进制的int类型
+ * bytes2Int            将byte类型数组（4字节）转化为int类型
+ * long2Bytes           将长整形转化为byte数组
+ * bytes2Long           将byte数组（长度为8）转化为长整形
+ * byte162float         将16进制的byte数组转化为float类型
+ * float2ByteArray      将float转化为byte数组，占用4个字节
+ * bytes2float          将10进制byte数组转化为Float
+ * byteCompare          两个byte数组是否值相等的比较
+ * byteToBit            将byte（字节）类型转化为位
+ * byteHexString        将指定byte数组以16进制的形式转成字符串
 
 #-------------------------------------------------
