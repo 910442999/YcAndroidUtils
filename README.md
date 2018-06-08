@@ -104,6 +104,8 @@ YcCalculationRelatedUtils
   stringToLong                : 字符串转换成long ,转换失败将会 return 0;
   stringToDouble              : 字符串转换成double ,转换失败将会 return 0;
   StringToInputStream         : 字符串转InputStream
+  stringTwoLines                将字符串从中间对折显示两行
+  hideCenterString              隐藏字符串中间的缺省
   upperFirstLetter            : 首字母大写
   lowerFirstLetter            : 首字母小写
   reverse                     : 反转字符串
@@ -146,8 +148,9 @@ YcCalculationRelatedUtils
   如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
   <p>
   getAmountValue                金额格式化
-  getRoundUp                    将数值四舍五入
-  getRoundUp                    将数值自定义四舍五入模式
+  getRoundUp                    格式化数值 四舍五入
+  getRoundDown                  格式化数值 不四舍五入
+  getRoundUpDown                自定义四舍五入
   getPercentValue               获取百分比（乘100）
   baseToSubunit                 将字符串 乘 10 的几次方 (如 10的18次方)
   subunitToBase                 将大整形 除以 10 的 几次方

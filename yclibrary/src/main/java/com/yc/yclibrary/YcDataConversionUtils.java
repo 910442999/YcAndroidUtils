@@ -85,8 +85,9 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
  * <p>
  * getAmountValue                金额格式化
- * getRoundUp                    将数值四舍五入
- * getRoundUp                    将数值自定义四舍五入模式
+ * getRoundUp                    格式化数值 四舍五入
+ * getRoundDown                  格式化数值 不四舍五入
+ * getRoundUpDown                自定义四舍五入
  * getPercentValue               获取百分比（乘100）
  * baseToSubunit                 将字符串 乘 10 的几次方 (如 10的18次方)
  * subunitToBase                 将大整形 除以 10 的 几次方
@@ -1138,7 +1139,46 @@ public class YcDataConversionUtils {
      * @return
      */
     public static String getRoundUp(BigDecimal value, int digit) {
-        return value.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
+        return value.setScale(digit, BigDecimal.ROUND_HALF_UP).toPlainString();
+    }
+
+    /**
+     * 将数值四舍五入
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundUp(String value, int digit) {
+        if (isNullString(value)) {
+            return "0";
+        }
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_HALF_UP).toPlainString();
+    }
+
+    /**
+     * 将数值不四舍五入
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundDown(String value, int digit) {
+        if (isNullString(value)) {
+            return "0";
+        }
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_DOWN).toPlainString();
+    }
+
+    /**
+     * 将数值不四舍五入
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundDown(double value, int digit) {
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_DOWN).toPlainString();
     }
 
     /**
@@ -1148,9 +1188,9 @@ public class YcDataConversionUtils {
      * @param digit 保留小数位
      * @return
      */
-    public static String getRoundUp(double value, int digit, int roundingMode) {
+    public static String getRoundUpDown(double value, int digit, int roundingMode) {
         BigDecimal result = new BigDecimal(value);
-        return result.setScale(digit, roundingMode).toString();
+        return result.setScale(digit, roundingMode).toPlainString();
     }
 
     /**
@@ -1160,12 +1200,12 @@ public class YcDataConversionUtils {
      * @param digit 保留小数位
      * @return
      */
-    public static String getRoundUp(String value, int digit, int roundingMode) {
+    public static String getRoundUpDown(String value, int digit, int roundingMode) {
         if (isNullString(value)) {
             return "0";
         }
         BigDecimal result = new BigDecimal(value);
-        return result.setScale(digit, roundingMode).toString();
+        return result.setScale(digit, roundingMode).toPlainString();
     }
 
     /**
