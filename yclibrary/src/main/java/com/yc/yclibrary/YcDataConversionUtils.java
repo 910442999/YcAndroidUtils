@@ -43,6 +43,8 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * stringToLong                : 字符串转换成long ,转换失败将会 return 0;
  * stringToDouble              : 字符串转换成double ,转换失败将会 return 0;
  * StringToInputStream         : 字符串转InputStream
+ * stringTwoLines               将字符串从中间对折显示两行
+ * hideCenterString             隐藏字符串中间的缺省
  * upperFirstLetter            : 首字母大写
  * lowerFirstLetter            : 首字母小写
  * reverse                     : 反转字符串
@@ -488,6 +490,8 @@ public class YcDataConversionUtils {
      * @return
      */
     public static String stringTwoLines(String str) {
+        if (YcStringUtils.isEmpty(str))
+            return "";
         int i = str.length() / 2;
         String substring = str.substring(0, i);
         String substring1 = str.substring(i, str.length());
@@ -505,6 +509,8 @@ public class YcDataConversionUtils {
      * @return
      */
     public static String hideCenterString(int start, int end, int center, String centerString, String string) {
+        if (YcStringUtils.isEmpty(string))
+            return "";
         String substring = string.substring(0, start);
         String substring1 = string.substring(string.length() - end, string.length());
         StringBuilder stringBuilder = new StringBuilder();
@@ -1188,23 +1194,24 @@ public class YcDataConversionUtils {
 
     /**
      * 将字符串 乘 10 的几次方
-     *
+     * <p>
      * Base - taken to mean default unit for a currency e.g. ETH, DOLLARS
      * 基准 - 用于表示货币的默认单位，例如, ETH，美元
      * Subunit - taken to mean subdivision of base e.g. WEI, CENTS
-     *亚基 - 用于表示基础的细分例如, WEI，CENTS
+     * 亚基 - 用于表示基础的细分例如, WEI，CENTS
+     *
      * @param baseAmountStr - decimal amonut in base unit of a given currency 以给定货币的基本单位计算十进制货币
-     * @param decimals - decimal places used to convert to subunits 小数位用于转换为亚单位
+     * @param decimals      - decimal places used to convert to subunits 小数位用于转换为亚单位
      * @return amount in subunits   金额在亚基
      */
     public static BigInteger baseToSubunit(String baseAmountStr, int decimals) {
-        assert(decimals >= 0);
+        assert (decimals >= 0);
         BigDecimal baseAmount = new BigDecimal(baseAmountStr);
         BigDecimal subunitAmount = baseAmount.multiply(BigDecimal.valueOf(10).pow(decimals));
         try {
             return subunitAmount.toBigIntegerExact();
         } catch (ArithmeticException ex) {
-            assert(false);
+            assert (false);
             return subunitAmount.toBigInteger();
         }
     }
@@ -1213,11 +1220,11 @@ public class YcDataConversionUtils {
      * 将大整形 除以 10 的 几次方
      *
      * @param subunitAmount - amouunt in subunits 在亚基中是有限的
-     * @param decimals - decimal places used to convert subunits to base 小数位用于将子单位转换为基数
+     * @param decimals      - decimal places used to convert subunits to base 小数位用于将子单位转换为基数
      * @return amount in base units 金额以基本单位表示
      */
     public static BigDecimal subunitToBase(BigInteger subunitAmount, int decimals) {
-        assert(decimals >= 0);
+        assert (decimals >= 0);
         return new BigDecimal(subunitAmount).divide(BigDecimal.valueOf(10).pow(decimals));
     }
 
