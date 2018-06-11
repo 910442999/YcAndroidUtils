@@ -42,6 +42,7 @@ import java.util.regex.PatternSyntaxException;
  * setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
  * setEdType        设置光标输入位置
  * getSystemLanguage 获取系统语言
+ * getAppLanguage   获取App语言
  * changeAppLanguage 更改App语言
  */
 public class YcUtils {
@@ -219,6 +220,7 @@ public class YcUtils {
 
     /**
      * 设置光标输入位置
+     *
      * @param editText
      */
     public static void setEdType(final EditText editText) {
@@ -353,23 +355,23 @@ public class YcUtils {
 
 
     /**
-     * 获取系统语言
+     * 获取App语言
      *
      * @param context 必须传应用的上下文否则无法获取资源文件
      * @return
      */
-    public static String getSystemLanguage(Context context) {
-        return getSystemLanguage(context, null);
+    public static String getAppLanguage(Context context) {
+        return getAppLanguage(context, null);
     }
 
     /**
-     * 获取系统语言
+     * 获取App语言
      *
      * @param context 必须传应用的上下文否则无法获取资源文件
      * @param country 国家
      * @return
      */
-    public static String getSystemLanguage(Context context, String country) {
+    public static String getAppLanguage(Context context, String country) {
         try {
             Locale locale;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -385,6 +387,21 @@ public class YcUtils {
                 return locale.getLanguage() + "-" + locale.getCountry();
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * 获取系统语言
+     *
+     * @return
+     */
+    public static String getSystemLanguage() {
+        try {
+            String language = Locale.getDefault().getLanguage();
+            return language;
         } catch (Exception e) {
             e.printStackTrace();
             return "";
