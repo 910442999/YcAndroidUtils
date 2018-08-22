@@ -72,7 +72,7 @@ public class YcGlideUtils {
      * @param imageView
      */
     public static void LoadingThumbnails(Context context, String url, float sizeMultiplier, ImageView imageView) {
-        Glide.with(context).load(url).thumbnail(0.1f).into(imageView);
+        Glide.with(context).load(url).thumbnail(sizeMultiplier).into(imageView);
     }
 
     /**
@@ -95,9 +95,29 @@ public class YcGlideUtils {
      *
      * @param url
      * @param imageView
+     * @param circular_bead 角度
      */
     public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead) {
         loading(context, url, RequestOptions.bitmapTransform(new YcGlideRoundTransform(context, circular_bead)), imageView);
+    }
+
+    /**
+     * 加载网络圆角图片
+     *
+     * @param url
+     * @param imageView
+     * @param circular_bead 角度
+     * @param load          正在加载中的图片
+     * @param err           加载失败的图片
+     */
+    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead, int load, int err) {
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(load)// 正在加载中的图片
+                .error(err) // 加载失败的图片
+                .bitmapTransform(new YcGlideRoundTransform(context, circular_bead)) //圆角剪切
+                .autoClone(); //自动填充
+
+        loading(context, url, requestOptions, imageView);
     }
 
     /**
@@ -114,6 +134,8 @@ public class YcGlideUtils {
      * @param context
      * @param url
      * @param imageView
+     * @param load      正在加载中的图片
+     * @param err       加载失败的图片
      */
     public static void loadCircleImage(Context context, String url, ImageView imageView, int load, int err) {
         RequestOptions requestOptions = new RequestOptions()
