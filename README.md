@@ -604,7 +604,15 @@ xml                      : log 字符串之 xml
  #YcRoundRectImageView  自定义圆角imageview
 
 
+#-------------------------------------------------
 
+   键盘相关 -> YcKeyboardUtils
 
+/**
+ * isSoftInputVisible                : 判断软键盘是否可见
+ * toggleSoftInput                   : 切换键盘显示与否状态
+ * showSoftInput                     : 显示软键盘
+ * hideSoftInput                     : 隐藏软键盘
+ */
 
 #-------------------------------------------------
