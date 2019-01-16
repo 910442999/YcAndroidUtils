@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="loading">loading...</string>
+    <string name="app_name">Yc Library</string>
     <string name="read_write_permissions">Please get the SDCard permission first.</string>
 </resources>

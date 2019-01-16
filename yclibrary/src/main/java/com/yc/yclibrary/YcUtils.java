@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.yc.yclibrary.interfaces.OnSimpleListener;
+import com.yc.yclibrary.interfaces.OnSimpleClickListener;
 
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -171,12 +171,12 @@ public class YcUtils {
 
 
     //----------------------------------------------------------------------------------------------延时任务封装 start
-    public static void delayToDo(long delayTime, final OnSimpleListener onSimpleListener) {
+    public static void delayToDo(long delayTime, final OnSimpleClickListener onSimpleClickListener) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 //execute the task
-                onSimpleListener.doSomething();
+                onSimpleClickListener.onCallBack("", "");
             }
         }, delayTime);
     }

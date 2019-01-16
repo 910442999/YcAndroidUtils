@@ -7,8 +7,35 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+1.2.2版本:   1.将模糊位图转移到YcImageUtils工具类中
+             2.优化YcActivityUtils工具类
+             3.增加YcEditTextInputLenLimit工具类  EditText输入限制仅支持中文
+             4.修改OnSimpleClickListener监听回调函数
 
 工具类说明:
+
+  #-------------------------------------------------
+
+   Yc工具类 YcUtils
+     init   初始化工具类
+     getContext 获取 Context
+     dip2px   dip转px
+     dp2px    dp转px
+     px2dip   px转dip
+     px2dp    px转dp
+     sp2px     sp转px
+     px2sp     px转sp
+     getRsString      获取string 资源文件
+     getRsDrawable    获取 Drawable 资源文件
+     getRsColor       获取 Color 资源文件
+     delayToDo        延迟任务
+     countDown        倒计时
+     setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
+     setEdType        设置光标输入位置
+     getSystemLanguage 获取系统语言
+     changeAppLanguage 更改App语言
+
+  #-------------------------------------------------
 
 YcActivityUtils.java
 
@@ -27,7 +54,7 @@ YcActivityUtils.java
     skipActivityAndFinishAll    : 跳转后Finish之前所有的Activity
     skipActivityForResult       : activityForResult封装
     getLauncherActivity         : 获取launcher activity
- 
+
 #------------------------------------------------
 
 YcBlurBitmapUtils
@@ -84,7 +111,7 @@ YcConstUtils
 
 #-------------------------------------------------
  YcCalculationRelatedUtils
- 
+
       * addition             加法运算
       * subtraction          减法运算
       * multiplication       乘法运算
@@ -164,7 +191,7 @@ YcConstUtils
    #-------------------------------------------------
 
    编码解码相关工具类  YcEncodeUtils
-    
+
       urlEncode               : URL编码
       urlDecode                   : URL解码
       base64Encode                : Base64编码
@@ -303,7 +330,7 @@ YcConstUtils
    #-------------------------------------------------
 
    Fragment管理相关    YcFragmentV4Utils 和 YcFragmentV7Utils
-   
+
       add                   : 新增 fragment
       show                  : 显示 fragment
       hide                  : 隐藏 fragment
@@ -344,7 +371,7 @@ YcConstUtils
    #-------------------------------------------------
 
    图像工具类 YcImageUtils
-   
+
     <p>
     bitmap2Bytes, bytes2Bitmap      : bitmap 与 byteArr 互转
     drawable2Bitmap, bitmap2Drawable: drawable 与 bitmap 互转
@@ -378,7 +405,7 @@ YcConstUtils
    #-------------------------------------------------
 
    log工具类  YcLogUtils
-    
+
      <p>
      getConfig                : 获取 log 配置
      Config.setLogSwitch      : 设置 log 总开关
@@ -415,7 +442,7 @@ YcConstUtils
    #-------------------------------------------------
 
    图片工具类    YcPhotoUtils
-   
+
     openCameraImage             : 调用系统相机
     openLocalImage              : 调用系统相册
     cropImage                   : 裁剪图片
@@ -443,7 +470,7 @@ YcConstUtils
    #-------------------------------------------------
 
    状态栏: YcStatusBarUtils
-     
+
       快速实现沉浸式状态栏（支持 4.4 以上版本的 MIUI 和 Flyme，以及 5.0 以上版本的其他 Android）。
       快速设置状态栏为黑色或白色字体图标（支持 4.4 以上版本 MIUI 和 Flyme，以及 6.0 以上版本的其他 Android）。
       提供多个常用的工具方法，如获取状态栏高度、判断当前是否全屏等等。
@@ -469,7 +496,7 @@ YcConstUtils
    #-------------------------------------------------
 
    时间相关 YcTimeUtils
-   
+
       millis2String           : 将时间戳转为时间字符串
       string2Millis           : 将时间字符串转为时间戳
       string2Date             : 将时间字符串转为 Date 类型
@@ -501,29 +528,8 @@ YcConstUtils
       getZodiac               : 获取星座
 
    #-------------------------------------------------
-
-   Yc工具类 YcUtils
-   
-     getContext 获取 Context
-     dip2px   dip转px
-     dp2px    dp转px
-     px2dip   px转dip
-     px2dp    px转dp
-     sp2px     sp转px
-     px2sp     px转sp
-     getRsString      获取string 资源文件
-     getRsDrawable    获取 Drawable 资源文件
-     getRsColor       获取 Color 资源文件
-     delayToDo        延迟任务
-     countDown        倒计时
-     setEdTwoDecimal  设置Edittext 首位小数点自动加零，最多两位小数
-     setEdType        设置光标输入位置
-     getSystemLanguage 获取系统语言
-     changeAppLanguage 更改App语言
-
-   #-------------------------------------------------
     Intent相关 YcIntentUtils
-     
+
        <p>
        getInstallAppIntent         : 获取安装App(支持7.0)的意图
        getUninstallAppIntent       : 获取卸载App的意图
@@ -541,7 +547,7 @@ YcConstUtils
    #-------------------------------------------------
 
    Shell相关工具类(是否root) YcShellUtils
-   
+
      <p>
      isRoot                      : 判断设备是否root
      execCmd                     : 是否是在root下执行命令
@@ -549,7 +555,7 @@ YcConstUtils
    #-------------------------------------------------
 
    进程相关 YcProcessUtils
-   
+
     getForegroundProcessName    : 获取前台线程包名
     getAllBackgroundProcesses   : 获取后台服务进程
     killAllBackgroundProcesses  : 杀死所有后台服务进程
@@ -558,7 +564,7 @@ YcConstUtils
    #-------------------------------------------------
 
   应用相关 ->YcAppUtils
-   
+
     * InstallAPK                  : 安装APK
     * installApp                  : 安装 App（支持 8.0）
     * installAppSilent            : 静默安装App
@@ -589,7 +595,7 @@ YcConstUtils
    #-------------------------------------------------
 
   Byte相关工具类
-   
+
     * <p>
     * hexStringToByte      将16进制字符串转化为bytes数组
     * bytesToHexString     将bytes数组转化为16进制字符串
@@ -629,3 +635,12 @@ YcConstUtils
       */
 
    #-------------------------------------------------
+
+    EditText 相关 -> YcEditTextInputLenLimit
+
+    isChinese 判断是否是中文
+    checkNameChese 检测String是否全是中文
+    lengthFilter  仅支持EditText输入中文
+
+   #-------------------------------------------------
+

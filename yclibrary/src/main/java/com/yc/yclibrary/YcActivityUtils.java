@@ -36,23 +36,32 @@ public class YcActivityUtils {
 
     private static Stack<Activity> activityStack;
 
+    private static Stack<Activity> initActivityStack() {
+        if (activityStack == null) {
+            activityStack = new Stack<>();
+        }
+        return activityStack;
+    }
+
+    public static Stack<Activity> getActivityStack() {
+        return initActivityStack();
+    }
+
+
     /**
      * 添加Activity 到栈
      *
      * @param activity
      */
     public static void addActivity(Activity activity) {
-        if (activityStack == null) {
-            activityStack = new Stack<>();
-        }
-        activityStack.add(activity);
+        getActivityStack().add(activity);
     }
 
     /**
      * 获取当前的Activity（堆栈中最后一个压入的)
      */
     public static Activity currentActivity() {
-        Activity activity = activityStack.lastElement();
+        Activity activity = getActivityStack().lastElement();
         return activity;
     }
 
@@ -60,7 +69,7 @@ public class YcActivityUtils {
      * 结束当前Activity（堆栈中最后一个压入的）
      */
     public static void finishActivity() {
-        Activity activity = activityStack.lastElement();
+        Activity activity = getActivityStack().lastElement();
 
     }
 
@@ -71,7 +80,7 @@ public class YcActivityUtils {
      */
     public static void finishActivity(Activity activity) {
         if (activity != null) {
-            activityStack.remove(activity);
+            getActivityStack().remove(activity);
             activity.finish();
             activity = null;
         }
@@ -81,7 +90,7 @@ public class YcActivityUtils {
      * 结束指定类名的Activity
      */
     public static void finishActivity(Class<?> cls) {
-        for (Activity activity : activityStack) {
+        for (Activity activity : getActivityStack()) {
             if (activity.getClass().equals(cls)) {
                 finishActivity(activity);
             }
@@ -92,13 +101,13 @@ public class YcActivityUtils {
      * 结束所有的Activity
      */
     public static void finishAllActivity() {
-        int size = activityStack.size();
+        int size = getActivityStack().size();
         for (int i = 0; i < size; i++) {
-            if (null != activityStack.get(i)) {
-                activityStack.get(i).finish();
+            if (null != getActivityStack().get(i)) {
+                getActivityStack().get(i).finish();
             }
         }
-        activityStack.clear();
+        getActivityStack().clear();
     }
 
     public static void AppExit(Context context) {
@@ -110,10 +119,6 @@ public class YcActivityUtils {
         } catch (Exception e) {
 
         }
-    }
-
-    public static Stack<Activity> getActivityStack() {
-        return activityStack;
     }
 
     /**

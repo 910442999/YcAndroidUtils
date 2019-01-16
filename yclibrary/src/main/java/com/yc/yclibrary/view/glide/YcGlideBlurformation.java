@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
-import com.yc.yclibrary.YcBlurBitmapUtils;
+import com.yc.yclibrary.YcImageUtils;
 
 import java.security.MessageDigest;
 
@@ -17,7 +17,7 @@ public class YcGlideBlurformation extends BitmapTransformation {
     }
     @Override
     protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
-        return YcBlurBitmapUtils.instance().blurBitmap(context, toTransform, 20,outWidth,outHeight);
+        return YcImageUtils.blurBitmap(context, toTransform, 20,outWidth,outHeight);
     }
     @Override
     public void updateDiskCacheKey(MessageDigest messageDigest) {
