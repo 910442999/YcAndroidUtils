@@ -7,16 +7,20 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
-1.2.2版本:   1.将模糊位图转移到YcImageUtils工具类中
-             2.优化YcActivityUtils工具类
-             3.增加YcEditTextInputLenLimit工具类  EditText输入限制仅支持中文
-             4.修改OnSimpleClickListener监听回调函数
+   1.2.2版本:
+
+         1.将模糊位图转移到YcImageUtils工具类中
+         2.优化YcActivityUtils工具类
+         3.增加YcEditTextInputLenLimit工具类  EditText输入限制仅支持中文
+         4.修改OnSimpleClickListener监听回调函数
+
 
 工具类说明:
 
   #-------------------------------------------------
 
    Yc工具类 YcUtils
+
      init   初始化工具类
      getContext 获取 Context
      dip2px   dip转px
