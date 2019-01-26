@@ -1,12 +1,20 @@
 package com.yc.yclibrary;
 
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Rect;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
+import android.support.annotation.RequiresApi;
+import android.support.v4.util.SimpleArrayMap;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,15 +24,25 @@ import org.json.JSONObject;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.net.UnknownHostException;
 import java.text.Format;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Formatter;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -39,12 +57,40 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 /**
- * <pre>
- *     author: Blankj
- *     blog  : http://blankj.com
- *     time  : 2016/09/21
- *     desc  : utils about log
- * </pre>
+ * log工具类  YcLogUtils
+ * <p>
+ * getConfig                : 获取 log 配置
+ * Config.setLogSwitch      : 设置 log 总开关
+ * Config.setConsoleSwitch  : 设置 log 控制台开关
+ * Config.setGlobalTag      : 设置 log 全局 tag
+ * Config.setLogHeadSwitch  : 设置 log 头部信息开关
+ * Config.setLog2FileSwitch : 设置 log 文件开关
+ * Config.setDir            : 设置 log 文件存储目录
+ * Config.setFilePrefix     : 设置 log 文件前缀
+ * Config.setBorderSwitch   : 设置 log 边框开关
+ * Config.setSingleTagSwitch: 设置 log 单一 tag 开关（为美化 AS 3.1 的 Logcat）
+ * Config.setConsoleFilter  : 设置 log 控制台过滤器
+ * Config.setFileFilter     : 设置 log 文件过滤器
+ * Config.setStackDeep      : 设置 log 栈深度
+ * Config.setStackOffset    : 设置 log 栈偏移
+ * Config.setSaveDays       : 设置 log 可保留天数
+ * Config.addFormatter      : 新增 log 格式化器
+ * log                      : 自定义 tag 的 type 日志
+ * v                        : tag 为类名的 Verbose 日志
+ * vTag                     : 自定义 tag 的 Verbose 日志
+ * d                        : tag 为类名的 Debug 日志
+ * dTag                     : 自定义 tag 的 Debug 日志
+ * i                        : tag 为类名的 Info 日志
+ * iTag                     : 自定义 tag 的 Info 日志
+ * w                        : tag 为类名的 Warn 日志
+ * wTag                     : 自定义 tag 的 Warn 日志
+ * e                        : tag 为类名的 Error 日志
+ * eTag                     : 自定义 tag 的 Error 日志
+ * a                        : tag 为类名的 Assert 日志
+ * aTag                     : 自定义 tag 的 Assert 日志
+ * file                     : log 到文件
+ * json                     : log 字符串之 json
+ * xml                      : log 字符串之 xml
  */
 public final class YcLogUtils {
 
@@ -64,28 +110,34 @@ public final class YcLogUtils {
 
     private static final int FILE = 0x10;
     private static final int JSON = 0x20;
-    private static final int XML  = 0x30;
+    private static final int XML = 0x30;
 
-    private static final String FILE_SEP       = System.getProperty("file.separator");
-    private static final String LINE_SEP       = System.getProperty("line.separator");
-    private static final String TOP_CORNER     = "┌";
-    private static final String MIDDLE_CORNER  = "├";
-    private static final String LEFT_BORDER    = "│ ";
-    private static final String BOTTOM_CORNER  = "└";
-    private static final String SIDE_DIVIDER   = "────────────────────────────────────────────────────────";
-    private static final String MIDDLE_DIVIDER = "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄";
-    private static final String TOP_BORDER     = TOP_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
-    private static final String MIDDLE_BORDER  = MIDDLE_CORNER + MIDDLE_DIVIDER + MIDDLE_DIVIDER;
-    private static final String BOTTOM_BORDER  = BOTTOM_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
-    private static final int    MAX_LEN        = 3000;
-    @SuppressLint("SimpleDateFormat")
-    private static final Format FORMAT         = new SimpleDateFormat("MM-dd HH:mm:ss.SSS ");
-    private static final String NOTHING        = "log nothing";
-    private static final String NULL           = "null";
-    private static final String ARGS           = "args";
-    private static final String PLACEHOLDER    = " ";
-    private static final Config CONFIG         = new Config();
-    private static ExecutorService sExecutor;
+    private static final String FILE_SEP = System.getProperty("file.separator");
+    private static final String LINE_SEP = System.getProperty("line.separator");
+    private static final String TOP_CORNER = "┌";
+    private static final String MIDDLE_CORNER = "├";
+    private static final String LEFT_BORDER = "│ ";
+    private static final String BOTTOM_CORNER = "└";
+    private static final String SIDE_DIVIDER =
+            "────────────────────────────────────────────────────────";
+    private static final String MIDDLE_DIVIDER =
+            "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄";
+    private static final String TOP_BORDER = TOP_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
+    private static final String MIDDLE_BORDER = MIDDLE_CORNER + MIDDLE_DIVIDER + MIDDLE_DIVIDER;
+    private static final String BOTTOM_BORDER = BOTTOM_CORNER + SIDE_DIVIDER + SIDE_DIVIDER;
+    private static final int MAX_LEN = 3000;
+    private static final Format FORMAT =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ", Locale.getDefault());
+    private static final String NOTHING = "log nothing";
+    private static final String NULL = "null";
+    private static final String ARGS = "args";
+    private static final String PLACEHOLDER = " ";
+    private static final Config CONFIG = new Config();
+
+    private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
+
+    private static final SimpleArrayMap<Class, IFormatter> I_FORMATTER_MAP = new SimpleArrayMap<>();
+
 
     private YcLogUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
@@ -192,9 +244,11 @@ public final class YcLogUtils {
     }
 
     public static void log(final int type, final String tag, final Object... contents) {
-        if (!CONFIG.mLogSwitch || (!CONFIG.mLog2ConsoleSwitch && !CONFIG.mLog2FileSwitch)) return;
+        if (!CONFIG.mLogSwitch || (!CONFIG.mLog2ConsoleSwitch && !CONFIG.mLog2FileSwitch))
+            return;
         int type_low = type & 0x0f, type_high = type & 0xf0;
-        if (type_low < CONFIG.mConsoleFilter && type_low < CONFIG.mFileFilter) return;
+        if (type_low < CONFIG.mConsoleFilter && type_low < CONFIG.mFileFilter)
+            return;
         final TagHead tagHead = processTagAndHead(tag);
         String body = processBody(type_high, contents);
         if (CONFIG.mLog2ConsoleSwitch && type_low >= CONFIG.mConsoleFilter && type_high != FILE) {
@@ -268,7 +322,8 @@ public final class YcLogUtils {
 
     private static String getFileName(final StackTraceElement targetElement) {
         String fileName = targetElement.getFileName();
-        if (fileName != null) return fileName;
+        if (fileName != null)
+            return fileName;
         // If name of file is null, should add
         // "-keepattributes SourceFile,LineNumberTable" in proguard file.
         String className = targetElement.getClassName();
@@ -287,13 +342,7 @@ public final class YcLogUtils {
         String body = NULL;
         if (contents != null) {
             if (contents.length == 1) {
-                Object object = contents[0];
-                if (object != null) body = object.toString();
-                if (type == JSON) {
-                    body = formatJson(body);
-                } else if (type == XML) {
-                    body = formatXml(body);
-                }
+                body = formatObject(type, contents[0]);
             } else {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0, len = contents.length; i < len; ++i) {
@@ -303,7 +352,7 @@ public final class YcLogUtils {
                             .append(i)
                             .append("]")
                             .append(" = ")
-                            .append(content == null ? NULL : content.toString())
+                            .append(formatObject(content))
                             .append(LINE_SEP);
                 }
                 body = sb.toString();
@@ -312,32 +361,35 @@ public final class YcLogUtils {
         return body.length() == 0 ? NOTHING : body;
     }
 
-    private static String formatJson(String json) {
-        try {
-            if (json.startsWith("{")) {
-                json = new JSONObject(json).toString(4);
-            } else if (json.startsWith("[")) {
-                json = new JSONArray(json).toString(4);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json;
+    private static String formatObject(int type, Object object) {
+        if (object == null)
+            return NULL;
+        if (type == JSON)
+            return LogFormatter.formatJson(object.toString());
+        if (type == XML)
+            return LogFormatter.formatXml(object.toString());
+        return formatObject(object);
     }
 
-    private static String formatXml(String xml) {
-        try {
-            Source xmlInput = new StreamSource(new StringReader(xml));
-            StreamResult xmlOutput = new StreamResult(new StringWriter());
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-            transformer.transform(xmlInput, xmlOutput);
-            xml = xmlOutput.getWriter().toString().replaceFirst(">", ">" + LINE_SEP);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static String formatObject(Object object) {
+        if (object == null)
+            return NULL;
+        if (!I_FORMATTER_MAP.isEmpty()) {
+            IFormatter iFormatter = I_FORMATTER_MAP.get(getClassFromObject(object));
+            if (iFormatter != null) {
+                //noinspection unchecked
+                return iFormatter.format(object);
+            }
         }
-        return xml;
+        if (object.getClass().isArray())
+            return LogFormatter.array2String(object);
+        if (object instanceof Throwable)
+            return LogFormatter.throwable2String((Throwable) object);
+        if (object instanceof Bundle)
+            return LogFormatter.bundle2String((Bundle) object);
+        if (object instanceof Intent)
+            return LogFormatter.intent2String((Intent) object);
+        return object.toString();
     }
 
     private static void print2Console(final int type,
@@ -345,29 +397,7 @@ public final class YcLogUtils {
                                       final String[] head,
                                       final String msg) {
         if (CONFIG.mSingleTagSwitch) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(PLACEHOLDER).append(LINE_SEP);
-            if (CONFIG.mLogBorderSwitch) {
-                sb.append(TOP_BORDER).append(LINE_SEP);
-                if (head != null) {
-                    for (String aHead : head) {
-                        sb.append(LEFT_BORDER).append(aHead).append(LINE_SEP);
-                    }
-                    sb.append(MIDDLE_BORDER).append(LINE_SEP);
-                }
-                for (String line : msg.split(LINE_SEP)) {
-                    sb.append(LEFT_BORDER).append(line).append(LINE_SEP);
-                }
-                sb.append(BOTTOM_BORDER);
-            } else {
-                if (head != null) {
-                    for (String aHead : head) {
-                        sb.append(aHead).append(LINE_SEP);
-                    }
-                }
-                sb.append(msg);
-            }
-            printMsgSingleTag(type, tag, sb.toString());
+            printSingleTagMsg(type, tag, processSingleTagMsg(type, tag, head, msg));
         } else {
             printBorder(type, tag, true);
             printHead(type, tag, head);
@@ -387,7 +417,8 @@ public final class YcLogUtils {
             for (String aHead : head) {
                 Log.println(type, tag, CONFIG.mLogBorderSwitch ? LEFT_BORDER + aHead : aHead);
             }
-            if (CONFIG.mLogBorderSwitch) Log.println(type, tag, MIDDLE_BORDER);
+            if (CONFIG.mLogBorderSwitch)
+                Log.println(type, tag, MIDDLE_BORDER);
         }
     }
 
@@ -408,7 +439,48 @@ public final class YcLogUtils {
         }
     }
 
-    private static void printMsgSingleTag(final int type, final String tag, final String msg) {
+    private static void printSubMsg(final int type, final String tag, final String msg) {
+        if (!CONFIG.mLogBorderSwitch) {
+            Log.println(type, tag, msg);
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        String[] lines = msg.split(LINE_SEP);
+        for (String line : lines) {
+            Log.println(type, tag, LEFT_BORDER + line);
+        }
+    }
+
+    private static String processSingleTagMsg(final int type,
+                                              final String tag,
+                                              final String[] head,
+                                              final String msg) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(PLACEHOLDER).append(LINE_SEP);
+        if (CONFIG.mLogBorderSwitch) {
+            sb.append(TOP_BORDER).append(LINE_SEP);
+            if (head != null) {
+                for (String aHead : head) {
+                    sb.append(LEFT_BORDER).append(aHead).append(LINE_SEP);
+                }
+                sb.append(MIDDLE_BORDER).append(LINE_SEP);
+            }
+            for (String line : msg.split(LINE_SEP)) {
+                sb.append(LEFT_BORDER).append(line).append(LINE_SEP);
+            }
+            sb.append(BOTTOM_BORDER);
+        } else {
+            if (head != null) {
+                for (String aHead : head) {
+                    sb.append(aHead).append(LINE_SEP);
+                }
+            }
+            sb.append(msg);
+        }
+        return sb.toString();
+    }
+
+    private static void printSingleTagMsg(final int type, final String tag, final String msg) {
         int len = msg.length();
         int countOfSub = len / MAX_LEN;
         if (countOfSub > 0) {
@@ -426,13 +498,15 @@ public final class YcLogUtils {
                             + LEFT_BORDER + msg.substring(index, len));
                 }
             } else {
-                int index = 0;
-                for (int i = 0; i < countOfSub; i++) {
-                    Log.println(type, tag, msg.substring(index, index + MAX_LEN));
+                Log.println(type, tag, msg.substring(0, MAX_LEN));
+                int index = MAX_LEN;
+                for (int i = 1; i < countOfSub; i++) {
+                    Log.println(type, tag,
+                            PLACEHOLDER + LINE_SEP + msg.substring(index, index + MAX_LEN));
                     index += MAX_LEN;
                 }
                 if (index != len) {
-                    Log.println(type, tag, msg.substring(index, len));
+                    Log.println(type, tag, PLACEHOLDER + LINE_SEP + msg.substring(index, len));
                 }
             }
         } else {
@@ -440,35 +514,11 @@ public final class YcLogUtils {
         }
     }
 
-    private static void printSubMsg(final int type, final String tag, final String msg) {
-        if (!CONFIG.mLogBorderSwitch) {
-            Log.println(type, tag, msg);
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        String[] lines = msg.split(LINE_SEP);
-        for (String line : lines) {
-            Log.println(type, tag, LEFT_BORDER + line);
-        }
-    }
-
-    private static void printSubMsg1(final int type, final String tag, final String msg) {
-        if (!CONFIG.mLogBorderSwitch) {
-
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        String[] lines = msg.split(LINE_SEP);
-        for (String line : lines) {
-            Log.println(type, tag, LEFT_BORDER + line);
-        }
-    }
-
     private static void print2File(final int type, final String tag, final String msg) {
         Date now = new Date(System.currentTimeMillis());
         String format = FORMAT.format(now);
-        String date = format.substring(0, 5);
-        String time = format.substring(6);
+        String date = format.substring(0, 10);
+        String time = format.substring(11);
         final String fullPath =
                 (CONFIG.mDir == null ? CONFIG.mDefaultDir : CONFIG.mDir)
                         + CONFIG.mFilePrefix + "-" + date + ".txt";
@@ -489,15 +539,57 @@ public final class YcLogUtils {
 
     private static boolean createOrExistsFile(final String filePath) {
         File file = new File(filePath);
-        if (file.exists()) return file.isFile();
-        if (!createOrExistsDir(file.getParentFile())) return false;
+        if (file.exists())
+            return file.isFile();
+        if (!createOrExistsDir(file.getParentFile()))
+            return false;
         try {
+            deleteDueLogs(filePath);
             boolean isCreate = file.createNewFile();
-            if (isCreate) printDeviceInfo(filePath);
+            if (isCreate) {
+                printDeviceInfo(filePath);
+            }
             return isCreate;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private static void deleteDueLogs(String filePath) {
+        File file = new File(filePath);
+        File parentFile = file.getParentFile();
+        File[] files = parentFile.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.matches("^" + CONFIG.mFilePrefix + "-[0-9]{4}-[0-9]{2}-[0-9]{2}.txt$");
+            }
+        });
+        if (files.length <= 0)
+            return;
+        final int length = filePath.length();
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            String curDay = filePath.substring(length - 14, length - 4);
+            long dueMillis = sdf.parse(curDay).getTime() - CONFIG.mSaveDays * 86400000L;
+            for (final File aFile : files) {
+                String name = aFile.getName();
+                int l = name.length();
+                String logDay = name.substring(l - 14, l - 4);
+                if (sdf.parse(logDay).getTime() <= dueMillis) {
+                    EXECUTOR.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            boolean delete = aFile.delete();
+                            if (!delete) {
+                                Log.e("LogUtils", "delete " + aFile + " failed!");
+                            }
+                        }
+                    });
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 
@@ -515,7 +607,7 @@ public final class YcLogUtils {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        String time = filePath.substring(filePath.length() - 9, filePath.length() - 4);
+        String time = filePath.substring(filePath.length() - 14, filePath.length() - 4);
         final String head = "************* Log Head ****************" +
                 "\nDate of Log        : " + time +
                 "\nDevice Manufacturer: " + Build.MANUFACTURER +
@@ -533,7 +625,8 @@ public final class YcLogUtils {
     }
 
     private static boolean isSpace(final String s) {
-        if (s == null) return true;
+        if (s == null)
+            return true;
         for (int i = 0, len = s.length(); i < len; ++i) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 return false;
@@ -543,20 +636,16 @@ public final class YcLogUtils {
     }
 
     private static void input2File(final String input, final String filePath) {
-        if (sExecutor == null) {
-            sExecutor = Executors.newSingleThreadExecutor();
-        }
-        Future<Boolean> submit = sExecutor.submit(new Callable<Boolean>() {
+        EXECUTOR.execute(new Runnable() {
             @Override
-            public Boolean call() throws Exception {
+            public void run() {
                 BufferedWriter bw = null;
                 try {
                     bw = new BufferedWriter(new FileWriter(filePath, true));
                     bw.write(input);
-                    return true;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    return false;
+                    Log.e("LogUtils", "log to " + filePath + " failed!");
                 } finally {
                     try {
                         if (bw != null) {
@@ -568,35 +657,29 @@ public final class YcLogUtils {
                 }
             }
         });
-        try {
-            if (submit.get()) return;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-        Log.e("LogUtils", "log to " + filePath + " failed!");
     }
 
     public static class Config {
         private String mDefaultDir;// The default storage directory of log.
         private String mDir;       // The storage directory of log.
-        private String  mFilePrefix        = "util";// The file prefix of log.
-        private boolean mLogSwitch         = true;  // The switch of log.
+        private String mFilePrefix = "util";// The file prefix of log.
+        private boolean mLogSwitch = true;  // The switch of log.
         private boolean mLog2ConsoleSwitch = true;  // The logcat's switch of log.
-        private String  mGlobalTag         = null;  // The global tag of log.
-        private boolean mTagIsSpace        = true;  // The global tag is space.
-        private boolean mLogHeadSwitch     = true;  // The head's switch of log.
-        private boolean mLog2FileSwitch    = false; // The file's switch of log.
-        private boolean mLogBorderSwitch   = true;  // The border's switch of log.
-        private boolean mSingleTagSwitch   = true;  // The single tag of log.
-        private int     mConsoleFilter     = V;     // The console's filter of log.
-        private int     mFileFilter        = V;     // The file's filter of log.
-        private int     mStackDeep         = 1;     // The stack's deep of log.
-        private int     mStackOffset       = 0;     // The stack's offset of log.
+        private String mGlobalTag = null;  // The global tag of log.
+        private boolean mTagIsSpace = true;  // The global tag is space.
+        private boolean mLogHeadSwitch = true;  // The head's switch of log.
+        private boolean mLog2FileSwitch = false; // The file's switch of log.
+        private boolean mLogBorderSwitch = true;  // The border's switch of log.
+        private boolean mSingleTagSwitch = true;  // The single tag of log.
+        private int mConsoleFilter = V;     // The console's filter of log.
+        private int mFileFilter = V;     // The file's filter of log.
+        private int mStackDeep = 1;     // The stack's deep of log.
+        private int mStackOffset = 0;     // The stack's offset of log.
+        private int mSaveDays = -1;    // The save days of log.
 
         private Config() {
-            if (mDefaultDir != null) return;
+            if (mDefaultDir != null)
+                return;
             if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                     && YcUtils.getContext().getExternalCacheDir() != null)
                 mDefaultDir = YcUtils.getContext().getExternalCacheDir() + FILE_SEP + "log" + FILE_SEP;
@@ -652,7 +735,7 @@ public final class YcLogUtils {
 
         public Config setFilePrefix(final String filePrefix) {
             if (isSpace(filePrefix)) {
-                mFilePrefix = "util";
+                mFilePrefix = "YcLogeUtils";
             } else {
                 mFilePrefix = filePrefix;
             }
@@ -689,6 +772,18 @@ public final class YcLogUtils {
             return this;
         }
 
+        public Config setSaveDays(@IntRange(from = 1) final int saveDays) {
+            mSaveDays = saveDays;
+            return this;
+        }
+
+        public final <T> Config addFormatter(final IFormatter<T> iFormatter) {
+            if (iFormatter != null) {
+                I_FORMATTER_MAP.put(getTypeClassFromInterface(iFormatter), iFormatter);
+            }
+            return this;
+        }
+
         @Override
         public String toString() {
             return "switch: " + mLogSwitch
@@ -703,19 +798,314 @@ public final class YcLogUtils {
                     + LINE_SEP + "consoleFilter: " + T[mConsoleFilter - V]
                     + LINE_SEP + "fileFilter: " + T[mFileFilter - V]
                     + LINE_SEP + "stackDeep: " + mStackDeep
-                    + LINE_SEP + "mStackOffset: " + mStackOffset;
+                    + LINE_SEP + "stackOffset: " + mStackOffset
+                    + LINE_SEP + "saveDays: " + mSaveDays
+                    + LINE_SEP + "formatter: " + I_FORMATTER_MAP;
         }
     }
 
+    public interface IFormatter<T> {
+        String format(T t);
+    }
+
     private static class TagHead {
-        String   tag;
+        String tag;
         String[] consoleHead;
-        String   fileHead;
+        String fileHead;
 
         TagHead(String tag, String[] consoleHead, String fileHead) {
             this.tag = tag;
             this.consoleHead = consoleHead;
             this.fileHead = fileHead;
         }
+    }
+
+    private static class LogFormatter {
+        static String formatJson(String json) {
+            try {
+                if (json.startsWith("{")) {
+                    json = new JSONObject(json).toString(4);
+                } else if (json.startsWith("[")) {
+                    json = new JSONArray(json).toString(4);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return json;
+        }
+
+        static String formatXml(String xml) {
+            try {
+                Source xmlInput = new StreamSource(new StringReader(xml));
+                StreamResult xmlOutput = new StreamResult(new StringWriter());
+                Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+                transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+                transformer.transform(xmlInput, xmlOutput);
+                xml = xmlOutput.getWriter().toString().replaceFirst(">", ">" + LINE_SEP);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return xml;
+        }
+
+        static String array2String(Object object) {
+            if (object instanceof Object[]) {
+                return Arrays.deepToString((Object[]) object);
+            } else if (object instanceof boolean[]) {
+                return Arrays.toString((boolean[]) object);
+            } else if (object instanceof byte[]) {
+                return Arrays.toString((byte[]) object);
+            } else if (object instanceof char[]) {
+                return Arrays.toString((char[]) object);
+            } else if (object instanceof double[]) {
+                return Arrays.toString((double[]) object);
+            } else if (object instanceof float[]) {
+                return Arrays.toString((float[]) object);
+            } else if (object instanceof int[]) {
+                return Arrays.toString((int[]) object);
+            } else if (object instanceof long[]) {
+                return Arrays.toString((long[]) object);
+            } else if (object instanceof short[]) {
+                return Arrays.toString((short[]) object);
+            }
+            throw new IllegalArgumentException("Array has incompatible type: " + object.getClass());
+        }
+
+        static String throwable2String(final Throwable e) {
+            Throwable t = e;
+            while (t != null) {
+                if (t instanceof UnknownHostException) {
+                    return "";
+                }
+                t = t.getCause();
+            }
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            Throwable cause = e.getCause();
+            while (cause != null) {
+                cause.printStackTrace(pw);
+                cause = cause.getCause();
+            }
+            pw.flush();
+            return sw.toString();
+        }
+
+        static String bundle2String(Bundle bundle) {
+            Iterator<String> iterator = bundle.keySet().iterator();
+            if (!iterator.hasNext()) {
+                return "Bundle {}";
+            }
+            StringBuilder sb = new StringBuilder(128);
+            sb.append("Bundle { ");
+            for (; ; ) {
+                String key = iterator.next();
+                Object value = bundle.get(key);
+                sb.append(key).append('=');
+                if (value != null && value instanceof Bundle) {
+                    sb.append(value == bundle ? "(this Bundle)" : bundle2String((Bundle) value));
+                } else {
+                    sb.append(formatObject(value));
+                }
+                if (!iterator.hasNext())
+                    return sb.append(" }").toString();
+                sb.append(',').append(' ');
+            }
+        }
+
+        static String intent2String(Intent intent) {
+            StringBuilder sb = new StringBuilder(128);
+            sb.append("Intent { ");
+            boolean first = true;
+            String mAction = intent.getAction();
+            if (mAction != null) {
+                sb.append("act=").append(mAction);
+                first = false;
+            }
+            Set<String> mCategories = intent.getCategories();
+            if (mCategories != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("cat=[");
+                boolean firstCategory = true;
+                for (String c : mCategories) {
+                    if (!firstCategory) {
+                        sb.append(',');
+                    }
+                    sb.append(c);
+                    firstCategory = false;
+                }
+                sb.append("]");
+            }
+            Uri mData = intent.getData();
+            if (mData != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("dat=").append(mData);
+            }
+            String mType = intent.getType();
+            if (mType != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("typ=").append(mType);
+            }
+            int mFlags = intent.getFlags();
+            if (mFlags != 0) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("flg=0x").append(Integer.toHexString(mFlags));
+            }
+            String mPackage = intent.getPackage();
+            if (mPackage != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("pkg=").append(mPackage);
+            }
+            ComponentName mComponent = intent.getComponent();
+            if (mComponent != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("cmp=").append(mComponent.flattenToShortString());
+            }
+            Rect mSourceBounds = intent.getSourceBounds();
+            if (mSourceBounds != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("bnds=").append(mSourceBounds.toShortString());
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                ClipData mClipData = intent.getClipData();
+                if (mClipData != null) {
+                    if (!first) {
+                        sb.append(' ');
+                    }
+                    first = false;
+                    clipData2String(mClipData, sb);
+                }
+            }
+            Bundle mExtras = intent.getExtras();
+            if (mExtras != null) {
+                if (!first) {
+                    sb.append(' ');
+                }
+                first = false;
+                sb.append("extras={");
+                sb.append(bundle2String(mExtras));
+                sb.append('}');
+            }
+            if (Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                Intent mSelector = intent.getSelector();
+                if (mSelector != null) {
+                    if (!first) {
+                        sb.append(' ');
+                    }
+                    first = false;
+                    sb.append("sel={");
+                    sb.append(mSelector == intent ? "(this Intent)" : intent2String(mSelector));
+                    sb.append("}");
+                }
+            }
+            sb.append(" }");
+            return sb.toString();
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+        private static void clipData2String(ClipData clipData, StringBuilder sb) {
+            ClipData.Item item = clipData.getItemAt(0);
+            if (item == null) {
+                sb.append("ClipData.Item {}");
+                return;
+            }
+            sb.append("ClipData.Item { ");
+            String mHtmlText = item.getHtmlText();
+            if (mHtmlText != null) {
+                sb.append("H:");
+                sb.append(mHtmlText);
+                sb.append("}");
+                return;
+            }
+            CharSequence mText = item.getText();
+            if (mText != null) {
+                sb.append("T:");
+                sb.append(mText);
+                sb.append("}");
+                return;
+            }
+            Uri uri = item.getUri();
+            if (uri != null) {
+                sb.append("U:").append(uri);
+                sb.append("}");
+                return;
+            }
+            Intent intent = item.getIntent();
+            if (intent != null) {
+                sb.append("I:");
+                sb.append(intent2String(intent));
+                sb.append("}");
+                return;
+            }
+            sb.append("NULL");
+            sb.append("}");
+        }
+    }
+
+    static <T> Class getTypeClassFromInterface(final IFormatter<T> callback) {
+        if (callback == null)
+            return null;
+        Type mySuperClass = callback.getClass().getGenericInterfaces()[0];
+        Type type = ((ParameterizedType) mySuperClass).getActualTypeArguments()[0];
+        while (type instanceof ParameterizedType) {
+            type = ((ParameterizedType) type).getRawType();
+        }
+        String className = type.toString();
+        if (className.startsWith("class ")) {
+            className = className.substring(6);
+        } else if (className.startsWith("interface ")) {
+            className = className.substring(10);
+        }
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private static Class getClassFromObject(final Object obj) {
+        Class objClass = obj.getClass();
+        Type[] genericInterfaces = objClass.getGenericInterfaces();
+        if (genericInterfaces.length == 1) {
+            Type type = genericInterfaces[0];
+            while (type instanceof ParameterizedType) {
+                type = ((ParameterizedType) type).getRawType();
+            }
+            String className = type.toString();
+            if (className.startsWith("class ")) {
+                className = className.substring(6);
+            } else if (className.startsWith("interface ")) {
+                className = className.substring(10);
+            }
+            try {
+                return Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return objClass;
     }
 }

@@ -16,10 +16,51 @@ import static com.yc.yclibrary.YcStringUtils.bytes2HexString;
 import static com.yc.yclibrary.YcStringUtils.hexString2Bytes;
 
 /**
- *
- * @author vondear
- * @date 2016/1/24
  * 加密解密相关的工具类
+ * <p>
+ * 哈希加密相关
+ * encryptMD2ToString          : MD2加密
+ * encryptMD2                  : MD2加密
+ * encryptMD5ToString          : MD5加密
+ * encryptMD5                  : MD5加密
+ * encryptMD5File2String       : MD5加密文件
+ * encryptMD5File              : MD5加密文件
+ * encryptSHA1ToString         : SHA1加密
+ * encryptSHA1                 : SHA1加密
+ * encryptSHA224ToString       : SHA224加密
+ * encryptSHA224               : SHA224加密
+ * encryptSHA256ToString       : SHA256加密
+ * encryptSHA256               : SHA256加密
+ * encryptSHA384ToString       : SHA384加密
+ * encryptSHA384               : SHA384加密
+ * encryptSHA512ToString       : SHA512加密
+ * encryptSHA512               : SHA512加密
+ * encryptAlgorithm            : 对data进行algorithm算法加密
+ * <p>
+ * DES加密相关
+ * DESTemplet                  : DES加密
+ * encryptDES                  : DES加密
+ * encryptDES2Base64           : DES加密后转为Base64编码
+ * encryptDES2HexString        : DES加密后转为16进制
+ * decryptBase64DES            : DES解密Base64编码密文
+ * decryptHexStringDES         : DES解密16进制密文
+ * decryptDES                  : DES解密
+ * <p>
+ * 3DES加密相关
+ * encrypt3DES2Base64          : 3DES加密后转为Base64编码
+ * encrypt3DES2HexString       : 3DES加密后转为16进制
+ * encrypt3DES                 : 3DES加密
+ * decryptBase64_3DES          : 3DES解密Base64编码密文
+ * decryptHexString3DES        : 3DES解密16进制密文
+ * decrypt3DES                 : 3DES解密
+ * <p>
+ * AES加密相关
+ * encryptAES2Base64           : AES加密后转为Base64编码
+ * encryptAES2HexString        : AES加密后转为16进制
+ * encryptAES                  : AES加密
+ * decryptBase64AES            : AES解密Base64编码密文
+ * decryptHexStringAES         : AES解密16进制密文
+ * decryptAES                  : AES解密
  */
 public class YcEncryptUtils {
 

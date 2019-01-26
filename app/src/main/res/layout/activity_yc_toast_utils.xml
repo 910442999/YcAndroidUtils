@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".YcToastUtilsActivity">
+
+    <TextView
+        android:id="@+id/test1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="成功" />
+
+    <TextView
+        android:id="@+id/test2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="失败" />
+
+    <TextView
+        android:id="@+id/test3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="信息" />
+
+    <TextView
+        android:id="@+id/test4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="警告" />
+
+    <TextView
+        android:id="@+id/test5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="正常" />
+
+    <TextView
+        android:id="@+id/test6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="图标在上 " />
+
+    <TextView
+        android:id="@+id/test7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:background="@color/gray_e0e0e0"
+        android:gravity="center"
+        android:padding="20dp"
+        android:text="图标带动画" />
+
+
+</LinearLayout>

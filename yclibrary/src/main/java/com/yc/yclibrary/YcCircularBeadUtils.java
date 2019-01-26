@@ -1,7 +1,6 @@
 package com.yc.yclibrary;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
@@ -11,6 +10,9 @@ import android.os.Build;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 
+/**
+ * 圆角工具类
+ */
 public class YcCircularBeadUtils {
     private static YcCircularBeadUtils sInstance;
 

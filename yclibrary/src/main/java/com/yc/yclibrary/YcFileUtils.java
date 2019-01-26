@@ -61,12 +61,83 @@ import java.util.Vector;
 
 import static com.yc.yclibrary.YcConstUtils.KB;
 
-//import android.util.Log;
 
 /**
- * Created in Sep 10, 2016 4:22:18 PM.
- *
- * @author Vondear.
+ * 文件相关
+ * <p>
+ * SD卡操作
+ * getRootPath                 : 得到SD卡根目录
+ * getCecheFolder              : 获取本应用图片缓存目录
+ * isSDCardEnable              : 判断SD卡是否打开
+ * getSDCardPath               : 获取SD卡路径
+ * getDataPath                 : 获取SD卡Data路径
+ * getFreeSpace                : 获取SD卡剩余空间
+ * sdCardIsAvailable           : SD卡是否可用
+ * <p>
+ * fileExists                  : 文件或者文件夹是否存在
+ * delAllFile                  : 删除指定文件夹下所有文件, 不保留文件夹.
+ * copy                        : 文件复制(文件路径)
+ * copyFile                    : 复制文件(文件/InputStream流)
+ * copyFolder                  : 复制整个文件夹内
+ * renameFile                  : 重命名文件
+ * getSDCardAvailaleSize       : 获取磁盘可用空间
+ * getDirSize                  : 获取某个目录可用大小
+ * getFileAllSize              : 获取文件或者文件夹大小
+ * initFile                    : 创建一个文件
+ * initDirectory               : 创建一个文件夹
+ * saveFile                    : 保存InputStream流到文件
+ * saveFileUTF8                : 用UTF8保存一个文件
+ * getFileUTF8                 : 用UTF8读取一个文件
+ * getFileIntent               : 得到一个文件Intent
+ * getDiskCacheDir             : 获取缓存目录
+ * getDiskFileDir              : 获取缓存视频文件目录
+ * mergeFiles                  : 多个文件拼接合并
+ * getNativeM3u                : 将在线的m3u8替换成本地的m3u8
+ * write                       : 将字符串 保存成 文件
+ * TextToFile                  : 传入文件名以及字符串, 将字符串信息保存到文件中
+ * GetAllFileName              : 获取 搜索的路径 下的 所有 后缀 的文件
+ * readFileByLines             : 以行为单位读取文件，常用于读面向行的格式化文件
+ * getFileByPath               : 根据文件路径获取文件
+ * isFileExists                : 判断文件是否存在
+ * isDir                       : 判断是否是目录
+ * isFile                      : 判断是否是文件
+ * createOrExistsDir           : 判断目录是否存在，不存在则判断是否创建成功
+ * createOrExistsFile          : 判断文件是否存在，不存在则判断是否创建成功
+ * createFileByDeleteOldFile   : 判断文件是否存在，存在则在创建之前删除
+ * copyOrMoveDir               : 复制或移动目录
+ * copyOrMoveFile              : 复制或移动文件
+ * copyDir                     : 复制目录
+ * copyFile                    : 复制文件
+ * moveDir                     : 移动目录
+ * moveFile                    : 移动文件
+ * deleteDir                   : 删除目录
+ * deleteFile                  : 删除文件
+ * listFilesInDir              : 获取目录下所有文件
+ * listFilesInDirWithFilter    : 获取目录下所有后缀名为suffix的文件
+ * searchFileInDir             : 获取目录下指定文件名的文件包括子目录
+ * writeFileFromIS             : 将输入流写入文件
+ * writeFileFromString         : 将字符串写入文件
+ * readFile2List               : 指定编码按行读取文件到List
+ * readFile2String             : 指定编码按行读取文件到字符串中
+ * readFile2Bytes              : 指定编码按行读取文件到字符数组中
+ * getFileCharsetSimple        : 简单获取文件编码格式
+ * getFileLines                : 获取文件行数
+ * getFileSize                 : 获取文件大小
+ * getFileMD5                  : 获取文件的MD5校验码
+ * closeIO                     : 关闭IO
+ * getDirName                  : 获取全路径中的最长目录
+ * getFileName                 : 获取全路径中的文件名
+ * getFileNameNoExtension      : 获取全路径中的不带拓展名的文件名
+ * getFileExtension            : 获取全路径中的文件拓展名
+ * <p>
+ * 清除数据
+ * cleanInternalCache          : 清除内部缓存
+ * cleanInternalFiles          : 清除内部文件
+ * cleanInternalDbs            : 清除内部数据库
+ * cleanInternalDbByName       : 根据名称清除数据库
+ * cleanInternalSP             : 清除内部SP
+ * cleanExternalCache          : 清除外部缓存
+ * cleanCustomCache            : 清除自定义目录下的文件
  */
 public class YcFileUtils {
 
@@ -116,7 +187,8 @@ public class YcFileUtils {
      * @return SD卡路径
      */
     public static String getSDCardPath() {
-        if (!isSDCardEnable()) return "sdcard unable!";
+        if (!isSDCardEnable())
+            return "sdcard unable!";
         return Environment.getExternalStorageDirectory().getPath() + File.separator;
     }
 
@@ -126,7 +198,8 @@ public class YcFileUtils {
      * @return SD卡Data路径
      */
     public static String getDataPath() {
-        if (!isSDCardEnable()) return "sdcard unable!";
+        if (!isSDCardEnable())
+            return "sdcard unable!";
         return Environment.getDataDirectory().getPath();
     }
 
@@ -137,7 +210,8 @@ public class YcFileUtils {
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static String getFreeSpace() {
-        if (!isSDCardEnable()) return "sdcard unable!";
+        if (!isSDCardEnable())
+            return "sdcard unable!";
         StatFs stat = new StatFs(getSDCardPath());
         long blockSize, availableBlocks;
         availableBlocks = stat.getAvailableBlocksLong();
@@ -208,19 +282,24 @@ public class YcFileUtils {
      * @return {@code true}: 删除成功<br>{@code false}: 删除失败
      */
     public static boolean deleteFilesInDir(File dir) {
-        if (dir == null) return false;
+        if (dir == null)
+            return false;
         // 目录不存在返回true
-        if (!dir.exists()) return true;
+        if (!dir.exists())
+            return true;
         // 不是目录返回false
-        if (!dir.isDirectory()) return false;
+        if (!dir.isDirectory())
+            return false;
         // 现在文件存在且是文件夹
         File[] files = dir.listFiles();
         if (files != null && files.length != 0) {
             for (File file : files) {
                 if (file.isFile()) {
-                    if (!deleteFile(file)) return false;
+                    if (!deleteFile(file))
+                        return false;
                 } else if (file.isDirectory()) {
-                    if (!deleteDir(file)) return false;
+                    if (!deleteDir(file))
+                        return false;
                 }
             }
         }
@@ -655,7 +734,7 @@ public class YcFileUtils {
             while ((line = reader.readLine()) != null) {
                 if (line.length() > 0 && line.startsWith("http://")) {
                     //replce 这行的内容
-//                    Log.d("ts替换", line + "  replce  " + pathList.get(num).getAbsolutePath());
+                    //                    Log.d("ts替换", line + "  replce  " + pathList.get(num).getAbsolutePath());
                     buf.append("file:" + pathList.get(num).getAbsolutePath() + "\r\n");
                     num++;
                 } else {
@@ -686,7 +765,7 @@ public class YcFileUtils {
             bw = new BufferedWriter(new FileWriter(filePath));
             // 将内容写入文件中
             bw.write(content);
-//            Log.d("M3U8替换", "替换完成");
+            //            Log.d("M3U8替换", "替换完成");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -837,10 +916,13 @@ public class YcFileUtils {
      * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
      */
     public static boolean createOrExistsFile(File file) {
-        if (file == null) return false;
+        if (file == null)
+            return false;
         // 如果存在，是文件则返回true，是目录则返回false
-        if (file.exists()) return file.isFile();
-        if (!createOrExistsDir(file.getParentFile())) return false;
+        if (file.exists())
+            return file.isFile();
+        if (!createOrExistsDir(file.getParentFile()))
+            return false;
         try {
             return file.createNewFile();
         } catch (IOException e) {
@@ -866,11 +948,14 @@ public class YcFileUtils {
      * @return {@code true}: 创建成功<br>{@code false}: 创建失败
      */
     public static boolean createFileByDeleteOldFile(File file) {
-        if (file == null) return false;
+        if (file == null)
+            return false;
         // 文件存在并且删除失败返回false
-        if (file.exists() && file.isFile() && !file.delete()) return false;
+        if (file.exists() && file.isFile() && !file.delete())
+            return false;
         // 创建目录失败返回false
-        if (!createOrExistsDir(file.getParentFile())) return false;
+        if (!createOrExistsDir(file.getParentFile()))
+            return false;
         try {
             return file.createNewFile();
         } catch (IOException e) {
@@ -900,27 +985,33 @@ public class YcFileUtils {
      * @return {@code true}: 复制或移动成功<br>{@code false}: 复制或移动失败
      */
     public static boolean copyOrMoveDir(File srcDir, File destDir, boolean isMove) {
-        if (srcDir == null || destDir == null) return false;
+        if (srcDir == null || destDir == null)
+            return false;
         // 如果目标目录在源目录中则返回false，看不懂的话好好想想递归怎么结束
         // srcPath : F:\\MyGithub\\AndroidUtilCode\\utilcode\\src\\test\\res
         // destPath: F:\\MyGithub\\AndroidUtilCode\\utilcode\\src\\test\\res1
         // 为防止以上这种情况出现出现误判，须分别在后面加个路径分隔符
         String srcPath = srcDir.getPath() + File.separator;
         String destPath = destDir.getPath() + File.separator;
-        if (destPath.contains(srcPath)) return false;
+        if (destPath.contains(srcPath))
+            return false;
         // 源文件不存在或者不是目录则返回false
-        if (!srcDir.exists() || !srcDir.isDirectory()) return false;
+        if (!srcDir.exists() || !srcDir.isDirectory())
+            return false;
         // 目标目录不存在返回false
-        if (!createOrExistsDir(destDir)) return false;
+        if (!createOrExistsDir(destDir))
+            return false;
         File[] files = srcDir.listFiles();
         for (File file : files) {
             File oneDestFile = new File(destPath + file.getName());
             if (file.isFile()) {
                 // 如果操作失败返回false
-                if (!copyOrMoveFile(file, oneDestFile, isMove)) return false;
+                if (!copyOrMoveFile(file, oneDestFile, isMove))
+                    return false;
             } else if (file.isDirectory()) {
                 // 如果操作失败返回false
-                if (!copyOrMoveDir(file, oneDestFile, isMove)) return false;
+                if (!copyOrMoveDir(file, oneDestFile, isMove))
+                    return false;
             }
         }
         return !isMove || deleteDir(srcDir);
@@ -947,13 +1038,17 @@ public class YcFileUtils {
      * @return {@code true}: 复制或移动成功<br>{@code false}: 复制或移动失败
      */
     public static boolean copyOrMoveFile(File srcFile, File destFile, boolean isMove) {
-        if (srcFile == null || destFile == null) return false;
+        if (srcFile == null || destFile == null)
+            return false;
         // 源文件不存在或者不是文件则返回false
-        if (!srcFile.exists() || !srcFile.isFile()) return false;
+        if (!srcFile.exists() || !srcFile.isFile())
+            return false;
         // 目标文件存在且是文件则返回false
-        if (destFile.exists() && destFile.isFile()) return false;
+        if (destFile.exists() && destFile.isFile())
+            return false;
         // 目标目录不存在返回false
-        if (!createOrExistsDir(destFile.getParentFile())) return false;
+        if (!createOrExistsDir(destFile.getParentFile()))
+            return false;
         try {
             return writeFileFromIS(destFile, new FileInputStream(srcFile), false)
                     && !(isMove && !deleteFile(srcFile));
@@ -1068,18 +1163,23 @@ public class YcFileUtils {
      * @return {@code true}: 删除成功<br>{@code false}: 删除失败
      */
     public static boolean deleteDir(File dir) {
-        if (dir == null) return false;
+        if (dir == null)
+            return false;
         // 目录不存在返回true
-        if (!dir.exists()) return true;
+        if (!dir.exists())
+            return true;
         // 不是目录返回false
-        if (!dir.isDirectory()) return false;
+        if (!dir.isDirectory())
+            return false;
         // 现在文件存在且是文件夹
         File[] files = dir.listFiles();
         for (File file : files) {
             if (file.isFile()) {
-                if (!deleteFile(file)) return false;
+                if (!deleteFile(file))
+                    return false;
             } else if (file.isDirectory()) {
-                if (!deleteDir(file)) return false;
+                if (!deleteDir(file))
+                    return false;
             }
         }
         return dir.delete();
@@ -1124,8 +1224,10 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDir(File dir, boolean isRecursive) {
-        if (isRecursive) return listFilesInDir(dir);
-        if (dir == null || !isDir(dir)) return null;
+        if (isRecursive)
+            return listFilesInDir(dir);
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         Collections.addAll(list, dir.listFiles());
         return list;
@@ -1148,7 +1250,8 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDir(File dir) {
-        if (dir == null || !isDir(dir)) return null;
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1183,8 +1286,10 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDirWithFilter(File dir, String suffix, boolean isRecursive) {
-        if (isRecursive) return listFilesInDirWithFilter(dir, suffix);
-        if (dir == null || !isDir(dir)) return null;
+        if (isRecursive)
+            return listFilesInDirWithFilter(dir, suffix);
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1216,7 +1321,8 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDirWithFilter(File dir, String suffix) {
-        if (dir == null || !isDir(dir)) return null;
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1251,8 +1357,10 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDirWithFilter(File dir, FilenameFilter filter, boolean isRecursive) {
-        if (isRecursive) return listFilesInDirWithFilter(dir, filter);
-        if (dir == null || !isDir(dir)) return null;
+        if (isRecursive)
+            return listFilesInDirWithFilter(dir, filter);
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1282,7 +1390,8 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> listFilesInDirWithFilter(File dir, FilenameFilter filter) {
-        if (dir == null || !isDir(dir)) return null;
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1317,7 +1426,8 @@ public class YcFileUtils {
      * @return 文件链表
      */
     public static List<File> searchFileInDir(File dir, String fileName) {
-        if (dir == null || !isDir(dir)) return null;
+        if (dir == null || !isDir(dir))
+            return null;
         List<File> list = new ArrayList<>();
         File[] files = dir.listFiles();
         for (File file : files) {
@@ -1352,8 +1462,10 @@ public class YcFileUtils {
      * @return {@code true}: 写入成功<br>{@code false}: 写入失败
      */
     public static boolean writeFileFromIS(File file, InputStream is, boolean append) {
-        if (file == null || is == null) return false;
-        if (!createOrExistsFile(file)) return false;
+        if (file == null || is == null)
+            return false;
+        if (!createOrExistsFile(file))
+            return false;
         OutputStream os = null;
         try {
             os = new BufferedOutputStream(new FileOutputStream(file, append));
@@ -1392,8 +1504,10 @@ public class YcFileUtils {
      * @return {@code true}: 写入成功<br>{@code false}: 写入失败
      */
     public static boolean writeFileFromString(File file, String content, boolean append) {
-        if (file == null || content == null) return false;
-        if (!createOrExistsFile(file)) return false;
+        if (file == null || content == null)
+            return false;
+        if (!createOrExistsFile(file))
+            return false;
         FileWriter fileWriter = null;
         try {
             fileWriter = new FileWriter(file, append);
@@ -1453,8 +1567,10 @@ public class YcFileUtils {
      * @return 包含从start行到end行的list
      */
     public static List<String> readFile2List(File file, int st, int end, String charsetName) {
-        if (file == null) return null;
-        if (st > end) return null;
+        if (file == null)
+            return null;
+        if (st > end)
+            return null;
         BufferedReader reader = null;
         try {
             String line;
@@ -1466,8 +1582,10 @@ public class YcFileUtils {
                 reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charsetName));
             }
             while ((line = reader.readLine()) != null) {
-                if (curLine > end) break;
-                if (st <= curLine && curLine <= end) list.add(line);
+                if (curLine > end)
+                    break;
+                if (st <= curLine && curLine <= end)
+                    list.add(line);
                 ++curLine;
             }
             return list;
@@ -1498,7 +1616,8 @@ public class YcFileUtils {
      * @return 字符串
      */
     public static String readFile2String(File file, String charsetName) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         BufferedReader reader = null;
         try {
             StringBuilder sb = new StringBuilder();
@@ -1538,7 +1657,8 @@ public class YcFileUtils {
      * @return StringBuilder对象
      */
     public static byte[] readFile2Bytes(File file) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         try {
             return inputStream2Bytes(new FileInputStream(file));
         } catch (FileNotFoundException e) {
@@ -1611,7 +1731,8 @@ public class YcFileUtils {
             int readChars;
             while ((readChars = is.read(buffer, 0, KB)) != -1) {
                 for (int i = 0; i < readChars; ++i) {
-                    if (buffer[i] == '\n') ++count;
+                    if (buffer[i] == '\n')
+                        ++count;
                 }
             }
         } catch (IOException e) {
@@ -1640,7 +1761,8 @@ public class YcFileUtils {
      * @return 文件大小
      */
     public static String getFileSize(File file) {
-        if (!isFileExists(file)) return "";
+        if (!isFileExists(file))
+            return "";
         return YcStringUtils.byte2FitSize(file.length());
     }
 
@@ -1670,7 +1792,8 @@ public class YcFileUtils {
      * @param closeables closeable
      */
     public static void closeIO(Closeable... closeables) {
-        if (closeables == null) return;
+        if (closeables == null)
+            return;
         try {
             for (Closeable closeable : closeables) {
                 if (closeable != null) {
@@ -1689,7 +1812,8 @@ public class YcFileUtils {
      * @return filePath最长目录
      */
     public static String getDirName(File file) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         return getDirName(file.getPath());
     }
 
@@ -1700,7 +1824,8 @@ public class YcFileUtils {
      * @return filePath最长目录
      */
     public static String getDirName(String filePath) {
-        if (YcStringUtils.isEmpty(filePath)) return filePath;
+        if (YcStringUtils.isEmpty(filePath))
+            return filePath;
         int lastSep = filePath.lastIndexOf(File.separator);
         return lastSep == -1 ? "" : filePath.substring(0, lastSep + 1);
     }
@@ -1712,7 +1837,8 @@ public class YcFileUtils {
      * @return 文件名
      */
     public static String getFileName(File file) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         return getFileName(file.getPath());
     }
 
@@ -1723,7 +1849,8 @@ public class YcFileUtils {
      * @return 文件名
      */
     public static String getFileName(String filePath) {
-        if (YcStringUtils.isEmpty(filePath)) return filePath;
+        if (YcStringUtils.isEmpty(filePath))
+            return filePath;
         int lastSep = filePath.lastIndexOf(File.separator);
         return lastSep == -1 ? filePath : filePath.substring(lastSep + 1);
     }
@@ -1735,7 +1862,8 @@ public class YcFileUtils {
      * @return 不带拓展名的文件名
      */
     public static String getFileNameNoExtension(File file) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         return getFileNameNoExtension(file.getPath());
     }
 
@@ -1746,7 +1874,8 @@ public class YcFileUtils {
      * @return 不带拓展名的文件名
      */
     public static String getFileNameNoExtension(String filePath) {
-        if (YcStringUtils.isEmpty(filePath)) return filePath;
+        if (YcStringUtils.isEmpty(filePath))
+            return filePath;
         int lastPoi = filePath.lastIndexOf('.');
         int lastSep = filePath.lastIndexOf(File.separator);
         if (lastSep == -1) {
@@ -1765,7 +1894,8 @@ public class YcFileUtils {
      * @return 文件拓展名
      */
     public static String getFileExtension(File file) {
-        if (file == null) return null;
+        if (file == null)
+            return null;
         return getFileExtension(file.getPath());
     }
 
@@ -1776,22 +1906,25 @@ public class YcFileUtils {
      * @return 文件拓展名
      */
     public static String getFileExtension(String filePath) {
-        if (YcStringUtils.isEmpty(filePath)) return filePath;
+        if (YcStringUtils.isEmpty(filePath))
+            return filePath;
         int lastPoi = filePath.lastIndexOf('.');
         int lastSep = filePath.lastIndexOf(File.separator);
-        if (lastPoi == -1 || lastSep >= lastPoi) return "";
+        if (lastPoi == -1 || lastSep >= lastPoi)
+            return "";
         return filePath.substring(lastPoi);
     }
 
     /**
      * 将文件转换成uri(支持7.0)
+     *
      * @param mContext
      * @param file
      * @return
      */
     public static Uri getUriForFile(Context mContext, File file) {
         Uri fileUri = null;
-        if (Build.VERSION.SDK_INT >= 24) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             fileUri = FileProvider.getUriForFile(mContext, mContext.getPackageName() + ".fileprovider", file);
         } else {
             fileUri = Uri.fromFile(file);
@@ -1958,7 +2091,8 @@ public class YcFileUtils {
      * @param closeables closeable
      */
     public static void closeIOQuietly(Closeable... closeables) {
-        if (closeables == null) return;
+        if (closeables == null)
+            return;
         for (Closeable closeable : closeables) {
             if (closeable != null) {
                 try {
@@ -2048,6 +2182,7 @@ public class YcFileUtils {
             }
         }
     }
+
     /**
      * inputStream转outputStream
      *

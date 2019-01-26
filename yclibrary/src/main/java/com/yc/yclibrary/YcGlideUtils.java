@@ -11,6 +11,20 @@ import com.yc.yclibrary.view.glide.YcGlideRoundTransform;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
+
+/**
+ * Glide加载网络图片相关
+ * <p>
+ * loadImageView       加载网络图片
+ * LoadingThumbnails   缩略图支持
+ * loadingGif          加载gif图片
+ * loadFilletImage     加载网络圆角图片
+ * loadCircleImage     加载网络圆型图片
+ * loadLocal           加载本地图片
+ * loadCrossFade       加载图片带淡入淡出的动画效果
+ * loadingBlurformation    加载一个图片为高斯模糊效果
+ * loadingClean            清理磁盘的缓存
+ */
 public class YcGlideUtils {
 
     /**
@@ -33,10 +47,8 @@ public class YcGlideUtils {
         } else if (diskCache == YcConstUtils.RESOURCE) {
             options.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
         }
-        Glide.with(context)
-                .load(url)
-                .apply(options)
-                .into(img);
+
+        loading(context, url, options, img);
     }
 
     public static void loadImageView(Context context, String url, ImageView img) {
@@ -60,7 +72,7 @@ public class YcGlideUtils {
      * @param imageView
      */
     public static void LoadingThumbnails(Context context, String url, float sizeMultiplier, ImageView imageView) {
-        Glide.with(context).load(url).thumbnail(0.1f).into(imageView);
+        Glide.with(context).load(url).thumbnail(sizeMultiplier).into(imageView);
     }
 
     /**
@@ -83,21 +95,55 @@ public class YcGlideUtils {
      *
      * @param url
      * @param imageView
+     * @param circular_bead 角度
      */
-    public static void loadFilletImage(Context context, String url, ImageView imageView,int circular_bead) {
-        Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new YcGlideRoundTransform(context,circular_bead))).into(imageView);
+    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead) {
+        loading(context, url, RequestOptions.bitmapTransform(new YcGlideRoundTransform(context, circular_bead)), imageView);
     }
- /**
+
+    /**
+     * 加载网络圆角图片
+     *
+     * @param url
+     * @param imageView
+     * @param circular_bead 角度
+     * @param load          正在加载中的图片
+     * @param err           加载失败的图片
+     */
+    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead, int load, int err) {
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(load)// 正在加载中的图片
+                .error(err) // 加载失败的图片
+                .bitmapTransform(new YcGlideRoundTransform(context, circular_bead)) //圆角剪切
+                .autoClone(); //自动填充
+
+        loading(context, url, requestOptions, imageView);
+    }
+
+    /**
      * 加载网络圆型图片
      *
      * @param url
      * @param imageView
      */
     public static void loadCircleImage(Context context, String url, ImageView imageView) {
-        Glide.with(context)
-                .load(url)
-                .apply(RequestOptions.circleCropTransform())
-                .into(imageView);
+        loading(context, url, RequestOptions.circleCropTransform(), imageView);
+    }
+
+    /**
+     * @param context
+     * @param url
+     * @param imageView
+     * @param load      正在加载中的图片
+     * @param err       加载失败的图片
+     */
+    public static void loadCircleImage(Context context, String url, ImageView imageView, int load, int err) {
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(load)// 正在加载中的图片
+                .error(err) // 加载失败的图片
+                .circleCrop() //圆形裁剪
+                .autoClone(); //自动填充
+        loading(context, url, requestOptions, imageView);
     }
 
     /**
@@ -135,6 +181,50 @@ public class YcGlideUtils {
         }
     }
 
+
+    /**
+     * 清理磁盘的缓存
+     *
+     * @param context applicationContext  全局上下文
+     */
+    public static void loadingClean(Context context) {
+        try {
+            Glide.get(context).clearDiskCache();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 加载一个图片为高斯模糊效果
+     *
+     * @param context applicationContext  全局上下文
+     */
+    public static void loadingBlurformation(Context context, String url, ImageView imageView) {
+        try {
+            loading(context, url, RequestOptions.bitmapTransform(new YcGlideBlurformation(context)), imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 加载图片
+     *
+     * @param context
+     * @param url            加载的链接
+     * @param requestOptions 请求的选项
+     * @param imageView      视图控件
+     */
+    public static void loading(Context context, String url, RequestOptions requestOptions, ImageView imageView) {
+        try {
+            Glide.with(context).load(url).apply(requestOptions).into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     /**
      * 仅从缓存加载图片
 
@@ -162,33 +252,6 @@ public class YcGlideUtils {
      .skipMemoryCache(true)
      .into(view);
      */
-
-    /**
-     * 清理磁盘的缓存
-     *
-     * @param context  applicationContext  全局上下文
-     */
-    public static void loadingClean(Context context) {
-        try {
-            Glide.get(context).clearDiskCache();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
- /**
-     * 加载一个图片为高斯模糊效果
-     *
-     * @param context  applicationContext  全局上下文
-     */
-    public static void loadingBlurformation(Context context,String url, ImageView imageView) {
-        try {
-            Glide.with(context).load(url).apply(RequestOptions.bitmapTransform(new YcGlideBlurformation(context))).into(imageView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
 
 }

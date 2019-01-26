@@ -15,6 +15,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Locale;
@@ -41,6 +43,8 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * stringToLong                : 字符串转换成long ,转换失败将会 return 0;
  * stringToDouble              : 字符串转换成double ,转换失败将会 return 0;
  * StringToInputStream         : 字符串转InputStream
+ * stringTwoLines               将字符串从中间对折显示两行
+ * hideCenterString             隐藏字符串中间的缺省
  * upperFirstLetter            : 首字母大写
  * lowerFirstLetter            : 首字母小写
  * reverse                     : 反转字符串
@@ -68,6 +72,25 @@ import static com.yc.yclibrary.YcConstUtils.MB;
  * string2InputStream          : string转inputStream按编码
  * outputStream2String         : outputStream转string按编码
  * string2OutputStream         : string转outputStream按编码
+ * format2Decimals                将字符串格式化为带两位小数的字符串 四舍五入
+ * formatDecimalsRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
+ * formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+ * formatDecimals                将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入
+ * formatDecimalsNoRounding       保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+ * <p>
+ * formatNoRoundingDecimals     将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入 不够位数原值返回  够则取舍
+ * <p>
+ * formatDecimals (三参)         将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+ * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
+ * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
+ * <p>
+ * getAmountValue                金额格式化
+ * getRoundUp                    格式化数值 四舍五入
+ * getRoundDown                  格式化数值 不四舍五入
+ * getRoundUpDown                自定义四舍五入
+ * getPercentValue               获取百分比（乘100）
+ * baseToSubunit                 将字符串 乘 10 的几次方 (如 10的18次方)
+ * subunitToBase                 将大整形 除以 10 的 几次方
  */
 public class YcDataConversionUtils {
     private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
@@ -157,6 +180,18 @@ public class YcDataConversionUtils {
     public static boolean isNumber(String value) {
         return isInteger(value) || isDouble(value);
     }
+
+    /**
+     * 判断字符串有几位小数 Judging the string has a few decimal places
+     */
+    public static int judgingStringHasFewDecimal(String str) {
+        int index = str.lastIndexOf(".");//寻找小数点的索引位置，若不是小数，则为-1
+        if (index > -1) {
+            index = str.substring(index + 1).length();//取得小数点后的数值，不包括小数点
+        }
+        return index;
+    }
+
 
     /**
      * 根据日期判断星座
@@ -337,7 +372,7 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 将字符串格式化为带两位小数的字符串 四舍五入
      *
      * @param str 字符串
      * @return
@@ -352,19 +387,143 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 四舍五入
+     *
+     * @param str 字符串 "#0.00"
+     * @return
+     */
+    public static String formatDecimals(Double str, String digits) {
+        return formatDecimals(str, digits, RoundingMode.HALF_UP);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入
+     *
+     * @param digits 字符串 "#0.00"
+     * @return
+     */
+    public static String formatDecimals(String str, String digits) {
+        return formatDecimals(stringToDouble(str), digits, RoundingMode.FLOOR);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 不四舍五入 不够位数原值返回  够则取舍
+     *
+     * @param digits 小数位
+     * @return
+     */
+    public static String formatNoRoundingDecimals(String str, int digits) {
+        int i = judgingStringHasFewDecimal(str);
+        if (digits > i) {
+            return str;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("#0.");
+            for (int j = 0; j < digits; j++) {
+                stringBuilder.append("0");
+            }
+            return formatDecimals(stringToDouble(str), stringBuilder.toString(), RoundingMode.FLOOR);
+        }
+
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  自定义舍入模式
+     * 如果数值为 0.0000000000001   自定义的舍入小数为#0.0000  四位小数  则 直接返回0.0000
+     * 如果数值为0.0001   自定义舍入小数为#0.0000000  七位小数位   则返回 0.0001000
+     *
+     * @param digits 字符串 "#0.00"
+     * @param FLOOR  舍入模式 RoundingMode
+     * @return
+     */
+    public static String formatDecimals(Double str, String digits, RoundingMode FLOOR) {
+        DecimalFormat df = new DecimalFormat(digits);
+        df.setRoundingMode(FLOOR);
+        return df.format(str);
+    }
+
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+     *
+     * @param aDouble
+     * @param digits  保留的小数点的位数
+     * @return
+     */
+    public static String formatDecimals(Double aDouble, int digits) {
+        return formatDecimals(aDouble, digits, 0);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串  不四舍五入
+     *
+     * @param aDouble
+     * @param digits
+     * @param groupingSize
+     * @return
+     */
+    public static String formatDecimals(Double aDouble, int digits, int groupingSize) {
+        return formatDecimals(aDouble, digits, groupingSize, RoundingMode.FLOOR);
+    }
+
+    /**
+     * 将字符串格式化为 (自定义位数 ) 小数的字符串 自定义是否四舍五入 如果超出位数,小数点全是0.00000000 的时候   直接返回0
+     *
+     * @param aDouble
+     * @param digits
+     * @param groupingSize
+     * @param FLOOR
+     * @return
+     */
+    public static String formatDecimals(Double aDouble, int digits, int groupingSize, RoundingMode FLOOR) {
+        DecimalFormat formater = new DecimalFormat();
+        formater.setMaximumFractionDigits(digits);
+        formater.setGroupingSize(groupingSize);
+        formater.setRoundingMode(FLOOR);
+        String result = formater.format(aDouble);
+        return result;
+    }
+
+    /**
+     * 将字符串从中间对折显示两行
      *
      * @param str 字符串
      * @return
      */
-    public static String format2Decimals(Double str, int digits) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        df.setMaximumFractionDigits(digits);
-        return df.format(str);
+    public static String stringTwoLines(String str) {
+        if (YcStringUtils.isEmpty(str))
+            return "";
+        int i = str.length() / 2;
+        String substring = str.substring(0, i);
+        String substring1 = str.substring(i, str.length());
+        return substring + "\n" + substring1;
     }
 
     /**
-     * 将字符串格式化为带两位小数的字符串
+     * 隐藏字符串中间的缺省
+     *
+     * @param start
+     * @param end
+     * @param center
+     * @param string
+     * @param centerString
+     * @return
+     */
+    public static String hideCenterString(int start, int end, int center, String centerString, String string) {
+        if (YcStringUtils.isEmpty(string))
+            return "";
+        String substring = string.substring(0, start);
+        String substring1 = string.substring(string.length() - end, string.length());
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < center; i++) {
+            stringBuilder.append(centerString);
+        }
+        return substring + stringBuilder.toString() + substring1;
+    }
+
+
+    /**
+     * 将Double格式化为带两位小数的字符串
      *
      * @param str 字符串
      * @return
@@ -375,6 +534,73 @@ public class YcDataConversionUtils {
             return "0" + df.format(str);
         } else {
             return df.format(str);
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
+     *
+     * @param str    "#0.00"
+     * @param digits
+     * @return
+     */
+
+    public static String formatDecimals(String str, int digit, String digits) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            DecimalFormat df = new DecimalFormat(digits);
+            if (df.format(stringToDouble(str)).startsWith(".")) {
+                return "0" + df.format(stringToDouble(str));
+            } else {
+                return df.format(stringToDouble(str));
+            }
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值 四舍五入
+     *
+     * @param digit
+     * @return
+     */
+
+    public static String formatDecimalsRounding(String str, int digit) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("#0.");
+            for (int j = 0; j < digit; j++) {
+                stringBuilder.append("0");
+            }
+            DecimalFormat df = new DecimalFormat(stringBuilder.toString());
+            if (df.format(stringToDouble(str)).startsWith(".")) {
+                return "0" + df.format(stringToDouble(str));
+            } else {
+                return df.format(stringToDouble(str));
+            }
+        }
+    }
+
+    /**
+     * 保留字符串自定义的小数位数 , 如果不够自定义的小数位数 则显示原来的数值  不四舍五入
+     *
+     * @param digit
+     * @return
+     */
+
+    public static String formatDecimalsNoRounding(String str, int digit) {
+
+        int i = judgingStringHasFewDecimal(str);
+        if (digit > i) {
+            return str;
+        } else {
+            return formatDecimals(stringToDouble(str), digit);
         }
     }
 
@@ -906,30 +1132,18 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 四舍五入
+     * 将数值四舍五入
      *
      * @param value 数值
      * @param digit 保留小数位
      * @return
      */
     public static String getRoundUp(BigDecimal value, int digit) {
-        return value.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
+        return value.setScale(digit, BigDecimal.ROUND_HALF_UP).toPlainString();
     }
 
     /**
-     * 四舍五入
-     *
-     * @param value 数值
-     * @param digit 保留小数位
-     * @return
-     */
-    public static String getRoundUp(double value, int digit) {
-        BigDecimal result = new BigDecimal(value);
-        return result.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
-    }
-
-    /**
-     * 四舍五入
+     * 将数值四舍五入
      *
      * @param value 数值
      * @param digit 保留小数位
@@ -939,8 +1153,59 @@ public class YcDataConversionUtils {
         if (isNullString(value)) {
             return "0";
         }
-        BigDecimal result = new BigDecimal(Double.parseDouble(value));
-        return result.setScale(digit, BigDecimal.ROUND_HALF_UP).toString();
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_HALF_UP).toPlainString();
+    }
+
+    /**
+     * 将数值不四舍五入
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundDown(String value, int digit) {
+        if (isNullString(value)) {
+            return "0";
+        }
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_DOWN).toPlainString();
+    }
+
+    /**
+     * 将数值不四舍五入
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundDown(double value, int digit) {
+        return new BigDecimal(value).setScale(digit, BigDecimal.ROUND_DOWN).toPlainString();
+    }
+
+    /**
+     * 自定义四舍五入模式
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundUpDown(double value, int digit, int roundingMode) {
+        BigDecimal result = new BigDecimal(value);
+        return result.setScale(digit, roundingMode).toPlainString();
+    }
+
+    /**
+     * 自定义四舍五入模式
+     *
+     * @param value 数值
+     * @param digit 保留小数位
+     * @return
+     */
+    public static String getRoundUpDown(String value, int digit, int roundingMode) {
+        if (isNullString(value)) {
+            return "0";
+        }
+        BigDecimal result = new BigDecimal(value);
+        return result.setScale(digit, roundingMode).toPlainString();
     }
 
     /**
@@ -959,7 +1224,7 @@ public class YcDataConversionUtils {
      * 获取百分比（乘100）
      *
      * @param value 数值
-     * @param digit 保留小数位
+     * @param digit 保留小数的位数
      * @return
      */
     public static String getPercentValue(double value, int digit) {
@@ -968,14 +1233,39 @@ public class YcDataConversionUtils {
     }
 
     /**
-     * 获取百分比（乘100,保留两位小数）
+     * 将字符串 乘 10 的几次方
+     * <p>
+     * Base - taken to mean default unit for a currency e.g. ETH, DOLLARS
+     * 基准 - 用于表示货币的默认单位，例如, ETH，美元
+     * Subunit - taken to mean subdivision of base e.g. WEI, CENTS
+     * 亚基 - 用于表示基础的细分例如, WEI，CENTS
      *
-     * @param value 数值
-     * @return
+     * @param baseAmountStr - decimal amonut in base unit of a given currency 以给定货币的基本单位计算十进制货币
+     * @param decimals      - decimal places used to convert to subunits 小数位用于转换为亚单位
+     * @return amount in subunits   金额在亚基
      */
-    public static String getPercentValue(double value) {
-        BigDecimal result = new BigDecimal(value);
-        return getPercentValue(result, 2);
+    public static BigInteger baseToSubunit(String baseAmountStr, int decimals) {
+        assert (decimals >= 0);
+        BigDecimal baseAmount = new BigDecimal(baseAmountStr);
+        BigDecimal subunitAmount = baseAmount.multiply(BigDecimal.valueOf(10).pow(decimals));
+        try {
+            return subunitAmount.toBigIntegerExact();
+        } catch (ArithmeticException ex) {
+            assert (false);
+            return subunitAmount.toBigInteger();
+        }
+    }
+
+    /**
+     * 将大整形 除以 10 的 几次方
+     *
+     * @param subunitAmount - amouunt in subunits 在亚基中是有限的
+     * @param decimals      - decimal places used to convert subunits to base 小数位用于将子单位转换为基数
+     * @return amount in base units 金额以基本单位表示
+     */
+    public static BigDecimal subunitToBase(BigInteger subunitAmount, int decimals) {
+        assert (decimals >= 0);
+        return new BigDecimal(subunitAmount).divide(BigDecimal.valueOf(10).pow(decimals));
     }
 
     /**

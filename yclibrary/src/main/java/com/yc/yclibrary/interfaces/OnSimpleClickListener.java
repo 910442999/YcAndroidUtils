@@ -6,6 +6,6 @@ package com.yc.yclibrary.interfaces;
  * @date 2017/9/22
  */
 
-public interface OnSimpleListener {
-    void doSomething();
+public interface OnSimpleClickListener<T, Q> {
+    void onCallBack(T t, Q q);
 }
