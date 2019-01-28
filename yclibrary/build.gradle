@@ -3,16 +3,13 @@ apply plugin: 'com.android.library'
 // 根节点添加 这是部署工件时使用的库版本
 
 android {
-    compileSdkVersion 27
-//    resourcePrefix "yc"    //这个随便填
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 27
-        versionCode 122
-        versionName "1.2.2"
-
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode rootProject.ext.versionCode
+        versionName rootProject.ext.versionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -42,5 +39,5 @@ dependencies {
 }
 
 //上传
-//apply from: 'bintrayUpload.gradle'
+apply from: 'bintrayUpload.gradle'
 

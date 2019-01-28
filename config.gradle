@@ -1,0 +1,17 @@
+//文件内部使用
+def supportLibraryVersion = '27.1.1'
+//外部使用的安卓版本相关
+ext {
+    applicationId = 'com.yc.ycandroidutils'
+    compileSdkVersion = 27
+    targetSdkVersion = 27
+    minSdkVersion = 15
+    buildToolsVersion = "27.1.1"
+    versionCode = 123
+    versionName = "1.2.3"
+}
+
+//compile依赖的第三方库
+ext.deps = [
+        supportv4                  : "com.android.support:support-v4:$supportLibraryVersion",
+]

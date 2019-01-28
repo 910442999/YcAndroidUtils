@@ -5,7 +5,7 @@ publish {
     userOrg = '910442999'//bintray.com的用户名
     groupId = 'com.yc'//jcenter上的路径
     artifactId = 'YcAndroidUtils'//项目名称
-    publishVersion = '1.0.1'//版本号
+    publishVersion = rootProject.ext.versionName //版本号
     desc = 'this is android tools'//描述，不重要
     website = 'https://github.com/910442999/YcAndroidUtils'//项目主页
 }
