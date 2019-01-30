@@ -438,7 +438,7 @@ public class YcUtils {
      * @param mUrl
      * @return
      */
-    public String getWebIconUrl(String mUrl) {
+    public static String getWebIconUrl(String mUrl) {
         String webUrl = null;
         try {
             URL url = new URL(mUrl);
