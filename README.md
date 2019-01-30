@@ -7,6 +7,11 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+   1.2.6版本:
+
+        1、增加YcResizableImageView 工具类 根据视图的宽  计算视图的高
+
+
    1.2.5版本:
 
       1.  YcImageUtils 增加以下方法
@@ -663,6 +668,14 @@ YcConstUtils
     isChinese 判断是否是中文
     checkNameChese 检测String是否全是中文
     lengthFilter  仅支持EditText输入中文
+
+   #-------------------------------------------------
+
+        自定义view相关
+
+       1、 YcResizableImageView 根据视图的宽  计算视图的高
+
+
 
    #-------------------------------------------------
 
