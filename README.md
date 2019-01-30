@@ -7,6 +7,18 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+   1.2.5版本:
+
+      1.  YcImageUtils 增加以下方法
+         * saveLruCacheBitmap   保存LruCache中的Bitmap图片
+         * getLruCacheBitmap    获取LruCache中的Bitmap图片
+         * removeLruCacheBitmap  移除LruCache中的Bitmap图片
+
+      2. YcUtils 增加以下方法
+         * stringFilter     只允许数字和汉字
+         * setEditNumberAuto  输入框控件
+         * getWebIconUrl  获取连接中的ico图片
+
    1.2.2版本:
 
          1.将模糊位图转移到YcImageUtils工具类中

@@ -1532,7 +1532,7 @@ public class YcImageUtils {
      * @param key
      * @param value
      */
-    public void saveLruCacheBitmap(String key, Bitmap value) {
+    public static void saveLruCacheBitmap(String key, Bitmap value) {
         //创建LruCache对象
         int maxSize = (int) Runtime.getRuntime().maxMemory();// 返回byte
         int cacheSize = maxSize / 1024 / 8;
@@ -1562,7 +1562,7 @@ public class YcImageUtils {
      * @param key
      * @return
      */
-    public Bitmap getLruCacheBitmap(String key) {
+    public static Bitmap getLruCacheBitmap(String key) {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.get(key);// 获取缓存对象
         } else {
@@ -1577,7 +1577,7 @@ public class YcImageUtils {
      * @param key
      * @return
      */
-    public Bitmap removeLruCacheBitmap(String key) {
+    public static Bitmap removeLruCacheBitmap(String key) {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.remove(key);// 删除缓存对象
         } else {
