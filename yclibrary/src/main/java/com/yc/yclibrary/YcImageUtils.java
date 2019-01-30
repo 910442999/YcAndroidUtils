@@ -32,6 +32,7 @@ import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
+import android.support.v4.util.LruCache;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -80,9 +81,14 @@ import java.net.URL;
  * compressByQuality               : 按质量压缩
  * compressBySampleSize            : 按采样大小压缩
  * 模糊位图            : 模糊位图
+ * <p>
+ * saveLruCacheBitmap   保存LruCache中的Bitmap图片
+ * getLruCacheBitmap    获取LruCache中的Bitmap图片
+ * removeLruCacheBitmap  移除LruCache中的Bitmap图片
  */
 
 public class YcImageUtils {
+    private static LruCache<String, Bitmap> mCache;
 
     /**
      * dip转px
@@ -1518,6 +1524,66 @@ public class YcImageUtils {
             YcFileUtils.closeIO(os);
         }
         return ret;
+    }
+
+    /**
+     * 保存LruCache中的Bitmap图片
+     *
+     * @param key
+     * @param value
+     */
+    public void saveLruCacheBitmap(String key, Bitmap value) {
+        //创建LruCache对象
+        int maxSize = (int) Runtime.getRuntime().maxMemory();// 返回byte
+        int cacheSize = maxSize / 1024 / 8;
+        // 创建LruCache时需要提供缓存的最大容量
+        if (mCache == null) {
+            mCache = new LruCache<String, Bitmap>(cacheSize) {
+                @Override
+                protected int sizeOf(String key, Bitmap value) {
+                    return super.sizeOf(key, value);
+                }
+
+                @Override
+                protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+                    // 当调用put或remove时触发此方法，可以在这里完成一些资源回收的操作
+                    super.entryRemoved(evicted, key, oldValue, newValue);
+                }
+            };
+        }
+        //将bitmap进行压缩处理
+        mCache.put(key, Bitmap.createScaledBitmap(value, 720, 1280, true));// 添加缓存对象
+        //      mCache.resize(1024);// 重新设置缓存的总容量大小
+    }
+
+    /**
+     * 获取LruCache中的Bitmap图片
+     *
+     * @param key
+     * @return
+     */
+    public Bitmap getLruCacheBitmap(String key) {
+        if (mCache != null && !YcStringUtils.isEmpty(key)) {
+            return mCache.get(key);// 获取缓存对象
+        } else {
+            YcLogUtils.eTag("tag", "LruCache缓存对象为空");
+            return null;
+        }
+    }
+
+    /**
+     * 移除LruCache中的Bitmap图片
+     *
+     * @param key
+     * @return
+     */
+    public Bitmap removeLruCacheBitmap(String key) {
+        if (mCache != null && !YcStringUtils.isEmpty(key)) {
+            return mCache.remove(key);// 删除缓存对象
+        } else {
+            YcLogUtils.eTag("tag", "LruCache缓存对象为空");
+            return null;
+        }
     }
 
     /**

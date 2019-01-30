@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.yc.yclibrary.interfaces.OnSimpleClickListener;
 
+import java.net.URL;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,6 +45,9 @@ import java.util.regex.PatternSyntaxException;
  * getSystemLanguage 获取系统语言
  * getAppLanguage   获取App语言
  * changeAppLanguage 更改App语言
+ * stringFilter     只允许数字和汉字
+ * setEditNumberAuto  输入框控件
+ * getWebIconUrl  获取连接中的ico图片
  */
 public class YcUtils {
     @SuppressLint("StaticFieldLeak")
@@ -428,4 +432,22 @@ public class YcUtils {
         }
     }
 
+    /**
+     * 获取连接中的ico图片
+     *
+     * @param mUrl
+     * @return
+     */
+    public String getWebIconUrl(String mUrl) {
+        String webUrl = null;
+        try {
+            URL url = new URL(mUrl);
+            if (url != null) {
+                webUrl = url.getProtocol() + "://" + url.getHost() + "/favicon.ico";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return webUrl;
+    }
 }

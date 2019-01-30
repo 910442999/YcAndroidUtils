@@ -38,6 +38,9 @@
      setEdType        设置光标输入位置
      getSystemLanguage 获取系统语言
      changeAppLanguage 更改App语言
+     stringFilter     只允许数字和汉字
+     setEditNumberAuto  输入框控件
+     getWebIconUrl  获取连接中的ico图片
 
   #-------------------------------------------------
 
@@ -405,6 +408,9 @@ YcConstUtils
     compressByScale                 : 按缩放压缩
     compressByQuality               : 按质量压缩
     compressBySampleSize            : 按采样大小压缩
+    saveLruCacheBitmap   保存LruCache中的Bitmap图片
+    getLruCacheBitmap    获取LruCache中的Bitmap图片
+    removeLruCacheBitmap  移除LruCache中的Bitmap图片
 
    #-------------------------------------------------
 
