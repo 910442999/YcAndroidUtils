@@ -7,6 +7,14 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+   1.2.8版本:
+
+        1、增加  YcImageUtils 工具类中  clearLruCacheBitmap  方法  清除LruCache缓存
+
+   1.2.7版本:
+
+        1、优化YcResizableImageView 工具类
+
    1.2.6版本:
 
         1、增加YcResizableImageView 工具类 根据视图的宽  计算视图的高
@@ -428,6 +436,7 @@ YcConstUtils
     saveLruCacheBitmap   保存LruCache中的Bitmap图片
     getLruCacheBitmap    获取LruCache中的Bitmap图片
     removeLruCacheBitmap  移除LruCache中的Bitmap图片
+    clearLruCacheBitmap   清除LruCache缓存
 
    #-------------------------------------------------
 

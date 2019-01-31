@@ -85,6 +85,7 @@ import java.net.URL;
  * saveLruCacheBitmap   保存LruCache中的Bitmap图片
  * getLruCacheBitmap    获取LruCache中的Bitmap图片
  * removeLruCacheBitmap  移除LruCache中的Bitmap图片
+ * clearLruCacheBitmap   清除LruCache缓存
  */
 
 public class YcImageUtils {
@@ -1583,6 +1584,19 @@ public class YcImageUtils {
         } else {
             YcLogUtils.eTag("tag", "LruCache缓存对象为空");
             return null;
+        }
+    }
+
+    /**
+     * 清除LruCache缓存
+     * evict:驱逐 逐出
+     */
+    public static void clearLruCacheBitmap() {
+        if (mCache != null) {
+            if (mCache.size() > 0) {
+                mCache.evictAll();
+            }
+            mCache = null;
         }
     }
 
