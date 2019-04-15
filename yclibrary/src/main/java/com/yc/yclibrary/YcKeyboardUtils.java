@@ -47,7 +47,7 @@ public class YcKeyboardUtils {
         if (view == null) {
             view = new View(activity);
         }
-        showSoftInput(activity,view);
+        showSoftInput(activity, view);
     }
 
     /**
@@ -57,11 +57,43 @@ public class YcKeyboardUtils {
      * @param view     为接受软键盘输入的视图
      */
     public static void showSoftInput(final Activity activity, final View view) {
+        showSoftInput(activity,view,InputMethodManager.SHOW_FORCED);
+    }
+  /**
+     * 强制显示键盘
+     *
+     * @param activity
+     * @param view     为接受软键盘输入的视图
+     */
+    public static void showSoftInput(final Activity activity, final View view,int inputMethod) {
         InputMethodManager imm =
                 (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm == null)
             return;
-        imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+        imm.showSoftInput(view, inputMethod);
+    }
+
+    /**
+     * 显示键盘
+     *
+     * @param view 为接受软键盘输入的视图
+     */
+    public static void showSoftInput(final View view) {
+        showSoftInput(view, InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+
+    /**
+     * 显示键盘
+     *
+     * @param inputMethod 模式  如 SHOW_FORCED 强制
+     * @param view        为接受软键盘输入的视图
+     */
+    public static void showSoftInput(final View view, int inputMethod) {
+        InputMethodManager inputManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.showSoftInput(view, 0);
+        if (inputManager == null)
+            return;
+        inputManager.showSoftInput(view, inputMethod);
     }
 
     /**
@@ -78,16 +110,46 @@ public class YcKeyboardUtils {
     }
 
     /**
-     * 强制隐藏键盘
+     * 隐藏键盘
      *
      * @param activity
      * @param view     为接受软键盘输入的视图
      */
     public static void hideSoftInput(final Activity activity, final View view) {
+        hideSoftInput(activity,view,InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+ /**
+     * 隐藏键盘
+     *
+     * @param activity
+     * @param view     为接受软键盘输入的视图
+     */
+    public static void hideSoftInput(final Activity activity, final View view ,int inputMethod) {
         InputMethodManager imm =
                 (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
         if (imm == null)
             return;
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), inputMethod);
+    }
+
+    /**
+     * 隐藏键盘
+     *
+     * @param view     为接受软键盘输入的视图
+     */
+    public static void hideSoftInput(final View view) {
+        hideSoftInput(view,InputMethodManager.RESULT_UNCHANGED_SHOWN);
+    }
+    /**
+     * 隐藏键盘
+     *
+     * @param view     为接受软键盘输入的视图
+     */
+    public static void hideSoftInput(final View view ,int inputMethod) {
+        InputMethodManager imm =
+                (InputMethodManager) view.getContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        if (imm == null)
+            return;
+        imm.hideSoftInputFromWindow(view.getWindowToken(), inputMethod);
     }
 }

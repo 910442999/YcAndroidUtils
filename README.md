@@ -7,6 +7,10 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+   1.3.0版本
+
+        1.优化软件盘工具类
+
    1.2.8版本:
 
         1、增加  YcImageUtils 工具类中  clearLruCacheBitmap  方法  清除LruCache缓存
