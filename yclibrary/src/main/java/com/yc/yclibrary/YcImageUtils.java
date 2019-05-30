@@ -1,6 +1,5 @@
 package com.yc.yclibrary;
 
-import android.animation.ObjectAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
@@ -27,17 +26,20 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.media.ThumbnailUtils;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.util.LruCache;
-import android.util.Log;
 import android.widget.ImageView;
+
+import com.yc.yclibrary.interfaces.OnSimpleClickListener;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileDescriptor;
@@ -86,6 +88,8 @@ import java.net.URL;
  * getLruCacheBitmap    获取LruCache中的Bitmap图片
  * removeLruCacheBitmap  移除LruCache中的Bitmap图片
  * clearLruCacheBitmap   清除LruCache缓存
+ * imageZoomInputStream 通过异步 将bitmap压缩后获取流数据
+ * imageZoomBitmap     异步压缩图片
  */
 
 public class YcImageUtils {
@@ -1567,7 +1571,7 @@ public class YcImageUtils {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.get(key);// 获取缓存对象
         } else {
-            YcLogUtils.eTag("tag", "LruCache缓存对象为空");
+            YcLogUtils.e("LruCache缓存对象为空");
             return null;
         }
     }
@@ -1582,7 +1586,7 @@ public class YcImageUtils {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.remove(key);// 删除缓存对象
         } else {
-            YcLogUtils.eTag("tag", "LruCache缓存对象为空");
+            YcLogUtils.e("LruCache缓存对象为空");
             return null;
         }
     }
@@ -1907,7 +1911,6 @@ public class YcImageUtils {
         matrix.postScale(scaleWidth, scaleHeight);
         Bitmap bitmap = Bitmap.createBitmap(bgimage, 0, 0, (int) width,
                 (int) height, matrix, true);
-        Log.e("tag", bitmap.getHeight() + bitmap.getWidth() + "d");
         return bitmap;
     }
 
@@ -1988,5 +1991,113 @@ public class YcImageUtils {
         // 将数据填充到Allocation中
         tmpOut.copyTo(outputBitmap);
         return outputBitmap;
+    }
+
+    /**
+     * 通过异步 将bitmap压缩后获取流数据
+     *
+     * @param src_bitmap
+     * @param onSimpleClickListener
+     */
+    public static void imageZoomInputStream(final Bitmap src_bitmap, final OnSimpleClickListener onSimpleClickListener) {
+        new AsyncTask<Void, Void, InputStream>() {
+            @Override
+            protected InputStream doInBackground(Void... params) {
+                return imageZoomInputStream(src_bitmap);
+            }
+
+            @Override
+            protected void onPostExecute(InputStream inputStream) {
+                if (inputStream == null)
+                    return;
+                onSimpleClickListener.onCallBack("tag", inputStream);
+            }
+        }.execute();
+    }
+
+    /**
+     * 异步压缩图片
+     *
+     * @param src_bitmap
+     * @param onSimpleClickListener
+     */
+    public static void imageZoomBitmap(final Bitmap src_bitmap, final OnSimpleClickListener onSimpleClickListener) {
+        new AsyncTask<Void, Void, Bitmap>() {
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                return imageZoomBitmap(src_bitmap);
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap bitmap) {
+                if (bitmap == null)
+                    return;
+                onSimpleClickListener.onCallBack("tag", bitmap);
+            }
+        }.execute();
+    }
+
+
+    private static final int IMAGE_SIZE = 1150;
+
+    /**
+     * 通过bitmap压缩后获取流数据
+     *
+     * @param src_bitmap
+     * @return
+     */
+    private static InputStream imageZoomInputStream(Bitmap src_bitmap) {
+        // 图片允许最大空间 单位：KB
+        double maxSize = IMAGE_SIZE;
+        // 将bitmap放至数组中，意在bitmap的大小（与实际读取的原文件要大）
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        src_bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] b = baos.toByteArray();
+
+        // 将字节换成KB
+        double mid = b.length / 1024;
+        // 判断bitmap占用空间是否大于允许最大空间 如果大于则压缩 小于则不压缩
+        if (mid > maxSize) {
+            // 获取bitmap大小 是允许最大大小的多少倍
+            double i = mid / maxSize;
+            // 开始压缩 此处用到平方根 将宽带和高度压缩掉对应的平方根倍 （1.保持刻度和高度和原bitmap比率一致，压缩后也达到了最大大小占用空间的大小）
+            Bitmap bitmap = zoomImage(src_bitmap, src_bitmap.getWidth() / Math.sqrt(i),
+                    src_bitmap.getHeight() / Math.sqrt(i));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return new ByteArrayInputStream(baos.toByteArray());
+        } else {
+
+            return new ByteArrayInputStream(baos.toByteArray());
+        }
+    }
+
+    /**
+     * 压缩图片
+     *
+     * @param src_bitmap
+     * @return
+     */
+    private static Bitmap imageZoomBitmap(Bitmap src_bitmap) {
+        // 图片允许最大空间 单位：KB
+        double maxSize = IMAGE_SIZE;
+        // 将bitmap放至数组中，意在bitmap的大小（与实际读取的原文件要大）
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        src_bitmap.compress(Bitmap.CompressFormat.JPEG, 20, baos);
+        byte[] b = baos.toByteArray();
+
+        // 将字节换成KB
+        double mid = b.length / 1024;
+        // 判断bitmap占用空间是否大于允许最大空间 如果大于则压缩 小于则不压缩
+        if (mid > maxSize) {
+            // 获取bitmap大小 是允许最大大小的多少倍
+            double i = mid / maxSize;
+            // 开始压缩 此处用到平方根 将宽带和高度压缩掉对应的平方根倍 （1.保持刻度和高度和原bitmap比率一致，压缩后也达到了最大大小占用空间的大小）
+            Bitmap bitmap = zoomImage(src_bitmap, src_bitmap.getWidth() / Math.sqrt(i),
+                    src_bitmap.getHeight() / Math.sqrt(i));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return bitmap;
+        } else {
+            return src_bitmap;
+        }
     }
 }

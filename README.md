@@ -7,6 +7,17 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+    1.3.1 版本
+
+      增加YcGlideCircleTransform  glide转变 圆形带边框
+      增加 YcCrashHandler  异常捕获
+      优化 YcGlideUtils  , 新增带边框原型图片
+      增加 YcImageUtils 工具类中   1, imageZoomInputStream 通过异步 将bitmap压缩后获取流数据 2,imageZoomBitmap     异步压缩图片
+      增加 YcJsonReadUtils 读取本地json文件    asset文件 转 json字符串  Raw 文件转 json字符串
+      优化 YcLogUtils
+      优化 YcToastUtils
+
+
    1.3.0版本
 
         1.优化软件盘工具类
@@ -395,15 +406,19 @@ YcConstUtils
    #-------------------------------------------------
    加载网络图片相关 YcGlideUtils
 
-     loadImageView       加载网络图片
-     LoadingThumbnails   缩略图支持
-     loadingGif          加载gif图片
-     loadFilletImage     加载网络圆角图片
-     loadCircleImage     加载网络圆型图片
-     loadLocal           加载本地图片
-     loadCrossFade       加载图片带淡入淡出的动画效果
-     loadingBlurformation    加载一个图片为高斯模糊效果
-     loadingClean            清理磁盘的缓存
+      loadImageView       加载网络图片
+      LoadingThumbnails   缩略图支持
+      loadingGif          加载gif图片
+      loadFilletImage     加载网络圆角图片
+      loadRoundCornerImage     自定义圆角角度
+      loadCircleImage     加载网络圆型图片
+      loadLocal           加载本地图片
+      loadCrossFade       加载图片带淡入淡出的动画效果
+      loadingBlurformation    加载一个图片为高斯模糊效果
+      loadingClean            清理磁盘的缓存
+      commonRequestOptions 公共的 gilde请求选项
+      getImagePath Glide 获得图片缓存路径
+      loadCircleBorderTransform 圆形带边框
    #-------------------------------------------------
 
    图像工具类 YcImageUtils
@@ -441,44 +456,12 @@ YcConstUtils
     getLruCacheBitmap    获取LruCache中的Bitmap图片
     removeLruCacheBitmap  移除LruCache中的Bitmap图片
     clearLruCacheBitmap   清除LruCache缓存
-
+    imageZoomInputStream 通过异步 将bitmap压缩后获取流数据
+    imageZoomBitmap     异步压缩图片
    #-------------------------------------------------
 
    log工具类  YcLogUtils
 
-     <p>
-     getConfig                : 获取 log 配置
-     Config.setLogSwitch      : 设置 log 总开关
-     Config.setConsoleSwitch  : 设置 log 控制台开关
-     Config.setGlobalTag      : 设置 log 全局 tag
-     Config.setLogHeadSwitch  : 设置 log 头部信息开关
-     Config.setLog2FileSwitch : 设置 log 文件开关
-     Config.setDir            : 设置 log 文件存储目录
-     Config.setFilePrefix     : 设置 log 文件前缀
-     Config.setBorderSwitch   : 设置 log 边框开关
-     Config.setSingleTagSwitch: 设置 log 单一 tag 开关（为美化 AS 3.1 的 Logcat）
-     Config.setConsoleFilter  : 设置 log 控制台过滤器
-     Config.setFileFilter     : 设置 log 文件过滤器
-     Config.setStackDeep      : 设置 log 栈深度
-     Config.setStackOffset    : 设置 log 栈偏移
-     Config.setSaveDays       : 设置 log 可保留天数
-     Config.addFormatter      : 新增 log 格式化器
-     log                      : 自定义 tag 的 type 日志
-     v                        : tag 为类名的 Verbose 日志
-     vTag                     : 自定义 tag 的 Verbose 日志
-     d                        : tag 为类名的 Debug 日志
-     dTag                     : 自定义 tag 的 Debug 日志
-     i                        : tag 为类名的 Info 日志
-     iTag                     : 自定义 tag 的 Info 日志
-     w                        : tag 为类名的 Warn 日志
-     wTag                     : 自定义 tag 的 Warn 日志
-     e                        : tag 为类名的 Error 日志
-     eTag                     : 自定义 tag 的 Error 日志
-     a                        : tag 为类名的 Assert 日志
-     aTag                     : 自定义 tag 的 Assert 日志
-     file                     : log 到文件
-     json                     : log 字符串之 json
-     xml                      : log 字符串之 xml
    #-------------------------------------------------
 
    图片工具类    YcPhotoUtils
@@ -688,7 +671,15 @@ YcConstUtils
 
        1、 YcResizableImageView 根据视图的宽  计算视图的高
 
-
+       2、YcGlideCircleTransform  glide转变 圆形带边框
 
    #-------------------------------------------------
 
+        YcCrashHandler  异常捕获
+
+  #-------------------------------------------------
+
+        YcJsonReadUtils 读取本地json文件
+
+        1,asset文件 转 json字符串
+        2.Raw 文件转 json字符串

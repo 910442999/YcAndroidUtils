@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -193,15 +194,17 @@ public class YcUtils {
      * @param waitTime 倒计时总时长
      * @param interval 倒计时的间隔时间
      * @param hint     倒计时完毕时显示的文字
+     * @param prompt   提示文案 如:已发送10妙 , 剩下 10妙
+     * @param unit     提示文案单位 如:10妙 ,  10s
      */
-    public static void countDown(final TextView textView, long waitTime, long interval, final String hint) {
+    public static void countDown(final TextView textView, final String prompt, final String unit, long waitTime, long interval, final String hint) {
         textView.setEnabled(false);
-        android.os.CountDownTimer timer = new android.os.CountDownTimer(waitTime, interval) {
+        CountDownTimer timer = new CountDownTimer(waitTime, interval) {
 
             @SuppressLint("DefaultLocale")
             @Override
             public void onTick(long millisUntilFinished) {
-                textView.setText(String.format("剩下 %d S", millisUntilFinished / 1000));
+                textView.setText(String.format(prompt + "%d" + unit, millisUntilFinished / 1000));
             }
 
             @Override

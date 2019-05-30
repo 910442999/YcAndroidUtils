@@ -1,13 +1,23 @@
 package com.yc.yclibrary;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.FutureTarget;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.signature.ObjectKey;
 import com.yc.yclibrary.view.glide.YcGlideBlurformation;
+import com.yc.yclibrary.view.glide.YcGlideCircleTransform;
 import com.yc.yclibrary.view.glide.YcGlideRoundTransform;
+
+import java.io.File;
+import java.util.concurrent.ExecutionException;
 
 import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
@@ -19,11 +29,15 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  * LoadingThumbnails   缩略图支持
  * loadingGif          加载gif图片
  * loadFilletImage     加载网络圆角图片
+ * loadRoundCornerImage     自定义圆角角度
  * loadCircleImage     加载网络圆型图片
  * loadLocal           加载本地图片
  * loadCrossFade       加载图片带淡入淡出的动画效果
  * loadingBlurformation    加载一个图片为高斯模糊效果
  * loadingClean            清理磁盘的缓存
+ * commonRequestOptions 公共的 gilde请求选项
+ * getImagePath Glide 获得图片缓存路径
+ * loadCircleBorderTransform 圆形带边框
  */
 public class YcGlideUtils {
 
@@ -82,23 +96,12 @@ public class YcGlideUtils {
      * @param url
      * @param as
      */
-    public static void loadingGif(Context context, String url, int as) {
+    public static void loadingGif(Context context, String url, int as, ImageView imageView) {
         if (as == YcConstUtils.NONE) {
-            Glide.with(context).asBitmap().load(url);//它始终加载静态图像，
+            Glide.with(context).asBitmap().load(url).into(imageView);//它始终加载静态图像，
         } else {
-            Glide.with(context).asGif().load(url);//除非图像是动画gif ，否则将失败。
+            Glide.with(context).asGif().load(url).into(imageView);//除非图像是动画gif ，否则将失败。
         }
-    }
-
-    /**
-     * 加载网络圆角图片
-     *
-     * @param url
-     * @param imageView
-     * @param circular_bead 角度
-     */
-    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead) {
-        loading(context, url, RequestOptions.bitmapTransform(new YcGlideRoundTransform(context, circular_bead)), imageView);
     }
 
     /**
@@ -110,14 +113,18 @@ public class YcGlideUtils {
      * @param load          正在加载中的图片
      * @param err           加载失败的图片
      */
-    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead, int load, int err) {
-        RequestOptions requestOptions = new RequestOptions()
-                .placeholder(load)// 正在加载中的图片
-                .error(err) // 加载失败的图片
-                .bitmapTransform(new YcGlideRoundTransform(context, circular_bead)) //圆角剪切
-                .autoClone(); //自动填充
-
+    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead, int load, int err, int diskChache) {
+        RequestOptions requestOptions = commonRequestOptions(load, err, new YcGlideRoundTransform(context, circular_bead), diskChache).autoClone(); //自动填充;
         loading(context, url, requestOptions, imageView);
+    }
+
+    //自定义圆角角度
+    public static void loadRoundCornerImage(Context mContext, int radiusDp, String url, ImageView imageView, int loading, int width, int height, int diskChache) {
+        //设置图片圆角角度
+        RoundedCorners roundedCorners = new RoundedCorners(radiusDp);
+        //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
+        RequestOptions requestOptions = commonRequestOptions(loading, loading, roundedCorners, diskChache).override(width, height);
+        loading(mContext, url, requestOptions, imageView);
     }
 
     /**
@@ -127,20 +134,28 @@ public class YcGlideUtils {
      * @param imageView
      */
     public static void loadCircleImage(Context context, String url, ImageView imageView) {
-        loading(context, url, RequestOptions.circleCropTransform(), imageView);
+        loadCircleImage(context, url, imageView, -1, -1, -1);
     }
 
     /**
+     * 加载网络圆型图片
+     *
+     * @param url
+     * @param imageView
+     */
+    public static void loadCircleImage(Context context, String url, ImageView imageView, int load, int err) {
+        loadCircleImage(context, url, imageView, load, err, -1);
+    }
+
+    /**加载网络圆型图片
      * @param context
      * @param url
      * @param imageView
      * @param load      正在加载中的图片
      * @param err       加载失败的图片
      */
-    public static void loadCircleImage(Context context, String url, ImageView imageView, int load, int err) {
-        RequestOptions requestOptions = new RequestOptions()
-                .placeholder(load)// 正在加载中的图片
-                .error(err) // 加载失败的图片
+    public static void loadCircleImage(Context context, String url, ImageView imageView, int load, int err, int diskCache) {
+        RequestOptions requestOptions = commonRequestOptions(load, err, null, diskCache)
                 .circleCrop() //圆形裁剪
                 .autoClone(); //自动填充
         loading(context, url, requestOptions, imageView);
@@ -150,17 +165,23 @@ public class YcGlideUtils {
      * 加载本地图片
      *
      * @param context
-     * @param gifId
+     * @param resId
      * @param imageView
      */
-    public static void loadLocal(Context context, int gifId, ImageView imageView) {
-        try {
-            Glide.with(context)
-                    .load(gifId)
-                    .into(imageView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void loadLocal(Context context, int resId, ImageView imageView) {
+        loadLocal(context, resId, null, imageView, R.drawable.placeholder, R.drawable.placeholder, -1);
+    }
+
+    /**
+     * 加载本地图片
+     *
+     * @param context
+     * @param resId
+     * @param imageView
+     */
+    public static void loadLocal(Context context, int resId, Transformation<Bitmap> transformation, ImageView imageView, int preRes, int preErr, int diskCache) {
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, transformation, diskCache);
+        Glide.with(context).load(resId).apply(requestOptions).into(imageView);
     }
 
     /**
@@ -181,31 +202,41 @@ public class YcGlideUtils {
         }
     }
 
-
-    /**
-     * 清理磁盘的缓存
-     *
-     * @param context applicationContext  全局上下文
-     */
-    public static void loadingClean(Context context) {
-        try {
-            Glide.get(context).clearDiskCache();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * 加载一个图片为高斯模糊效果
      *
-     * @param context applicationContext  全局上下文
+     * @param context
      */
-    public static void loadingBlurformation(Context context, String url, ImageView imageView) {
-        try {
-            loading(context, url, RequestOptions.bitmapTransform(new YcGlideBlurformation(context)), imageView);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public static void loadingBlurformation(Context context, String url, ImageView imageView, int preRes, int preErr, int diskCache) {
+        loading(context, url, commonRequestOptions(preRes, preErr, new YcGlideBlurformation(context), diskCache), imageView);
+    }
+
+    /**
+     * 圆形带边框
+     *
+     * @param mContext
+     * @param resId
+     * @param imageView
+     * @param preRes
+     */
+
+    public static void loadCircleBorderTransform(Context mContext, int resId, ImageView imageView, float borderWidth, int borderColor, int preRes, int preErr, int diskCache) {
+        YcGlideCircleTransform glideCircleTransform = new YcGlideCircleTransform(borderWidth, borderColor);
+        loadLocal(mContext, resId, glideCircleTransform, imageView, preRes, preErr, diskCache);
+    }
+
+    /**
+     * 圆形带边框
+     *
+     * @param mContext
+     * @param url
+     * @param imageView
+     * @param preRes
+     */
+    public static void loadCircleBorderTransform(Context mContext, String url, ImageView imageView, float borderWidth, int borderColor, int preRes, int preErr, int diskCache) {
+        YcGlideCircleTransform glideCircleTransform = new YcGlideCircleTransform(borderWidth, borderColor);
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, glideCircleTransform, diskCache);
+        loading(mContext, url, requestOptions, imageView);
     }
 
     /**
@@ -224,34 +255,81 @@ public class YcGlideUtils {
         }
     }
 
+    /**
+     * Glide 获得图片缓存路径
+     */
+    public static String getImagePath(Context context, String imgUrl) {
+        String path = null;
+        FutureTarget<File> future = Glide.with(context)
+                .load(imgUrl)
+                .downloadOnly(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        try {
+            File cacheFile = future.get();
+            path = cacheFile.getAbsolutePath();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return path;
+    }
 
     /**
-     * 仅从缓存加载图片
-
-     GlideApp.with(fragment)
-     .load(url)
-     .onlyRetrieveFromCache(true)
-     .into(imageView);
-     跳过内存缓存
-
-     GlideApp.with(fragment)
-     .load(url)
-     .skipMemoryCache(true)
-     .into(view);
-     跳过磁盘缓存
-
-     GlideApp.with(fragment)
-     .load(url)
-     .diskCacheStrategy(DiskCacheStrategy.NONE)
-     .into(view);
-     跳过所有的缓存
-
-     GlideApp.with(fragment)
-     .load(url)
-     .diskCacheStrategy(DiskCacheStrategy.NONE)
-     .skipMemoryCache(true)
-     .into(view);
+     * 清理磁盘的缓存
+     *
+     * @param context applicationContext  全局上下文
      */
+    public static void loadingClean(Context context) {
+        try {
+            Glide.get(context).clearDiskCache();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-
+    /**
+     * 公共的 gilde请求选项
+     *
+     * @param preRes
+     * @param transformation
+     * @param diskCache      -1 默认
+     * @return
+     */
+    public static RequestOptions commonRequestOptions(int preRes, int preErr, Transformation<Bitmap> transformation, int diskCache) {
+        RequestOptions options;
+        if (transformation == null) {
+            options = new RequestOptions();
+        } else {
+            options = new RequestOptions().bitmapTransform(transformation);
+        }
+        if (preRes != -1) {
+            options = options.placeholder(preRes);
+        }
+        if (preErr != -1) {
+            options = options.error(preErr);
+        }
+        if (diskCache != -1) {
+            //DiskCacheStrategy.AUTOMATIC： 表示让Glide根据图片资源智能地选择使用哪一种缓存策略（默认选项）。
+            if (diskCache == YcConstUtils.NONE) {
+                options = options.diskCacheStrategy(DiskCacheStrategy.NONE);// 磁盘缓存策略
+            } else if (diskCache == YcConstUtils.ALL) {
+                options = options.diskCacheStrategy(DiskCacheStrategy.ALL);
+            } else if (diskCache == YcConstUtils.DATA) {
+                options = options.diskCacheStrategy(DiskCacheStrategy.DATA);
+            } else if (diskCache == YcConstUtils.RESOURCE) {
+                options = options.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
+            } else if (diskCache == YcConstUtils.SIGNATURE) {
+                //根据key重新缓存
+                options = options.signature(new ObjectKey(YcTimeUtils.getNowString()));
+            } else if (diskCache == YcConstUtils.ONLY_RETRIEVE_FROM_CACHE) {
+                //仅从缓存加载图片
+                options = options.onlyRetrieveFromCache(true);
+            } else if (diskCache == YcConstUtils.SKIP_MEMORY_CACHE) {
+                //跳过内存缓存
+                options = options.skipMemoryCache(true);
+            } else if (diskCache == YcConstUtils.SKIP_MEMORY_CACHE) {
+                //跳过所有的缓存
+                options = options.skipMemoryCache(true).diskCacheStrategy(DiskCacheStrategy.NONE);
+            }
+        }
+        return options;
+    }
 }

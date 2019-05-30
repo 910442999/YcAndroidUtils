@@ -1,11 +1,8 @@
 package com.yc.yclibrary.view;
 
-import android.content.Context;
 import android.text.InputFilter;
 import android.text.Spanned;
 import android.widget.EditText;
-
-import com.yc.yclibrary.YcToastUtils;
 
 /**
  * EditText输入限制类
@@ -16,7 +13,7 @@ public class YcEditTextInputLenLimit {
     private static char[] chineseParam = new char[]{'」', '，', '。', '？', '…', '：', '～', '【', '＃', '、', '％', '＊', '＆', '＄', '（', '‘', '’',
             '“', '”', '『', '〔', '｛', '【', '￥', '￡', '‖', '〖', '《', '「', '》', '〗', '】', '｝', '〕', '』', '”', '）', '！', '；', '—'};
 
-    public static void lengthFilter(final Context context, final int input_limit_len, final EditText editText) {
+    public static void lengthFilter(final int input_limit_len, final EditText editText) {
         InputFilter[] filters = new InputFilter[1];
 
         filters[0] = new InputFilter.LengthFilter(input_limit_len) {
@@ -25,7 +22,6 @@ public class YcEditTextInputLenLimit {
 
                 // 如果不是中文，返回“”
                 if (!isChinese) {
-                    YcToastUtils.normal(context, "请输入中文字符").show();
                     return "";
                 }
                 //长度过长就返回“”

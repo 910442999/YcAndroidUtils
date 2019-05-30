@@ -133,8 +133,11 @@ public class YcConstUtils {
     //无缓存
     public static final int NONE = 0;
     //缓存所有
-    public static final int ALL = 1;
-    public static final int DATA = 3;
-    public static final int RESOURCE = 4;
+    public static final int ALL = 1; //既缓存原始图片，也缓存转换过后的图片
+    public static final int DATA = 3; //只缓存原始图片
+    public static final int RESOURCE = 4; //只缓存转换过后的图片
+    public static final int ONLY_RETRIEVE_FROM_CACHE = 5; //仅从缓存加载图片
+    public static final int SKIP_MEMORY_CACHE = 6; //跳过内存缓存
+    public static final int SIGNATURE = 7; //根据key重新缓存
 
 }
