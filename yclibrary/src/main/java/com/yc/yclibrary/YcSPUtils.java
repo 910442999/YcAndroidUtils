@@ -18,26 +18,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- sp缓存 YcSPUtils
-
- getInstance: 获取 SP 实例
- put        : SP 中写入数据
- getString  : SP 中读取 String
- getInt     : SP 中读取 int
- getLong    : SP 中读取 long
- getFloat   : SP 中读取 float
- getBoolean : SP 中读取 boolean
- getAll     : SP 中获取所有键值对
- getStringSet : SP 中读取set
- getObject : SP 中读取对象
- contains   : SP 中是否存在该 key
- remove     : SP 中移除该 key
- clear      : SP 中清除所有数据
+ * sp缓存 YcSPUtils
+ * <p>
+ * getInstance: 获取 SP 实例
+ * put        : SP 中写入数据
+ * getString  : SP 中读取 String
+ * getInt     : SP 中读取 int
+ * getLong    : SP 中读取 long
+ * getFloat   : SP 中读取 float
+ * getBoolean : SP 中读取 boolean
+ * getAll     : SP 中获取所有键值对
+ * getStringSet : SP 中读取set
+ * getObject : SP 中读取对象
+ * contains   : SP 中是否存在该 key
+ * remove     : SP 中移除该 key
+ * clear      : SP 中清除所有数据
  */
 @SuppressLint("ApplySharedPref")
 public final class YcSPUtils {
 
-    private static SimpleArrayMap<String, YcSPUtils> SP_UTILS_MAP = new SimpleArrayMap<>();
+    private static YcSPUtils spUtils;
     private SharedPreferences sp;
 
     /**
@@ -56,11 +56,10 @@ public final class YcSPUtils {
      * @return the single {@link YcSPUtils} instance
      */
     public static YcSPUtils getInstance(String spName) {
-        if (isSpace(spName)) spName = "YcSPUtils";
-        YcSPUtils spUtils = SP_UTILS_MAP.get(spName);
+        if (isSpace(spName))
+            spName = "YcSPUtils";
         if (spUtils == null) {
             spUtils = new YcSPUtils(spName);
-            SP_UTILS_MAP.put(spName, spUtils);
         }
         return spUtils;
     }
@@ -420,7 +419,8 @@ public final class YcSPUtils {
     }
 
     private static boolean isSpace(final String s) {
-        if (s == null) return true;
+        if (s == null)
+            return true;
         for (int i = 0, len = s.length(); i < len; ++i) {
             if (!Character.isWhitespace(s.charAt(i))) {
                 return false;

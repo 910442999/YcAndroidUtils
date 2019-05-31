@@ -9,7 +9,6 @@ public class BaseAppLication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        YcUtils.init(this);
-        YcLogUtils.init();
+        YcUtils.getInstance().setLog("自定义log").init(this);
     }
 }

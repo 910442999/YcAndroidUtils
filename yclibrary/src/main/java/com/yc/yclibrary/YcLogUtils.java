@@ -12,10 +12,6 @@ import com.orhanobut.logger.PrettyFormatStrategy;
 
 public final class YcLogUtils {
 
-    public static void init() {
-        init("YcLogUtils");
-    }
-
     public static void init(String tag) {
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
