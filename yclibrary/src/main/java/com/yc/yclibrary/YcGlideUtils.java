@@ -14,7 +14,6 @@ import com.bumptech.glide.request.target.Target;
 import com.bumptech.glide.signature.ObjectKey;
 import com.yc.yclibrary.view.glide.YcGlideBlurformation;
 import com.yc.yclibrary.view.glide.YcGlideCircleTransform;
-import com.yc.yclibrary.view.glide.YcGlideRoundTransform;
 
 import java.io.File;
 import java.util.concurrent.ExecutionException;
@@ -104,22 +103,24 @@ public class YcGlideUtils {
         }
     }
 
-    /**
-     * 加载网络圆角图片
-     *
-     * @param url
-     * @param imageView
-     * @param circular_bead 角度
-     * @param load          正在加载中的图片
-     * @param err           加载失败的图片
-     */
-    public static void loadFilletImage(Context context, String url, ImageView imageView, int circular_bead, int load, int err, int diskChache) {
-        RequestOptions requestOptions = commonRequestOptions(load, err, new YcGlideRoundTransform(context, circular_bead), diskChache).autoClone(); //自动填充;
-        loading(context, url, requestOptions, imageView);
+    //自定义圆角角度
+    public static void loadRoundCornerImage(Context mContext, String url, ImageView imageView, int radiusDp, int loading) {
+        loadRoundCornerImage(mContext, url, imageView, radiusDp, loading, 300, 300, YcConstUtils.ALL);
     }
 
-    //自定义圆角角度
-    public static void loadRoundCornerImage(Context mContext, int radiusDp, String url, ImageView imageView, int loading, int width, int height, int diskChache) {
+    /**
+     * 自定义圆角图片
+     *
+     * @param mContext
+     * @param url
+     * @param imageView
+     * @param radiusDp
+     * @param loading
+     * @param width      采样率 500
+     * @param height     采样率 500
+     * @param diskChache
+     */
+    public static void loadRoundCornerImage(Context mContext, String url, ImageView imageView, int radiusDp, int loading, int width, int height, int diskChache) {
         //设置图片圆角角度
         RoundedCorners roundedCorners = new RoundedCorners(radiusDp);
         //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
@@ -147,7 +148,9 @@ public class YcGlideUtils {
         loadCircleImage(context, url, imageView, load, err, -1);
     }
 
-    /**加载网络圆型图片
+    /**
+     * 加载网络圆型图片
+     *
      * @param context
      * @param url
      * @param imageView

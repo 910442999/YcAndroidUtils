@@ -9,6 +9,8 @@
 
     <!--黑色-->
     <color name="black">#000000</color>
+    <color name="gray_405266">#405266</color>
+    <color name="gray_6B88AA">#6B88AA</color>
     <color name="black_333333">#333333</color>
     <color name="gray_acacac">#acacac</color>
     <color name="gray_ddcccccc">#ddcccccc</color>

@@ -2,6 +2,7 @@ package com.yc.yclibrary.view;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -20,11 +21,9 @@ import java.util.List;
  * 轮播公告Veiw
  */
 public class YcNoticeView extends ViewFlipper implements View.OnClickListener {
-
-    private Context mContext;
     private List<String> mNotices;
-    float size = dp2px(13f);
-    int color = 1;
+    float size = 26f;
+    int color = Color.GRAY;
     int lines = 1;
     int gravity = Gravity.LEFT;
     private int mInterval = 3000;
@@ -40,7 +39,6 @@ public class YcNoticeView extends ViewFlipper implements View.OnClickListener {
     }
 
     private void init(Context context, AttributeSet attrs) {
-        mContext = context;
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.YcNoticeView);
         size = a.getDimension(R.styleable.YcNoticeView_nvTextSize, size);
         gravity = a.getInteger(R.styleable.YcNoticeView_nvTextGravity, gravity);
@@ -53,8 +51,8 @@ public class YcNoticeView extends ViewFlipper implements View.OnClickListener {
         // 内边距5dp
         setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         // 设置enter和leave动画
-        Animation animationIn = AnimationUtils.loadAnimation(mContext, R.anim.notify_in);
-        Animation animationOut = AnimationUtils.loadAnimation(mContext, R.anim.notify_out);
+        Animation animationIn = AnimationUtils.loadAnimation(getContext(), R.anim.notify_in);
+        Animation animationOut = AnimationUtils.loadAnimation(getContext(), R.anim.notify_out);
         if (mDuration != -1) {
             animationIn.setDuration(mDuration);
             animationOut.setDuration(mDuration);
@@ -74,14 +72,14 @@ public class YcNoticeView extends ViewFlipper implements View.OnClickListener {
         for (int i = 0; i < notices.size(); i++) {
             // 根据公告内容构建一个Tetview
             String notice = notices.get(i);
-            TextView textView = new TextView(mContext);
+            TextView textView = new TextView(getContext());
             textView.setSingleLine();
             textView.setText(notice);
-            textView.setTextSize(size);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
             textView.setMaxLines(lines);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setTextColor(color);
-            textView.setGravity(gravity);
+            textView.setGravity(Gravity.CENTER_VERTICAL | gravity);
             // 将公告的位置设置为textView的tag方便点击是回调给用户
             textView.setTag(i);
             textView.setOnClickListener(this);
@@ -115,11 +113,5 @@ public class YcNoticeView extends ViewFlipper implements View.OnClickListener {
      */
     public void setOnNoticeClickListener(OnNoticeClickListener onNoticeClickListener) {
         mOnNoticeClickListener = onNoticeClickListener;
-    }
-
-    private int dp2px(float dpValue) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                dpValue,
-                mContext.getResources().getDisplayMetrics());
     }
 }
