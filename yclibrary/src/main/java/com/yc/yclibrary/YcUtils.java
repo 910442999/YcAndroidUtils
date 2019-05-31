@@ -74,16 +74,6 @@ public class YcUtils {
     }
 
     /**
-     * 初始化工具类
-     *
-     * @param tag log标识
-     */
-    public YcUtils setLog(String tag) {
-        YcLogUtils.init(YcStringUtils.isEmpty(tag) ? "YcLogUtils" : tag);
-        return this;
-    }
-
-    /**
      * 在某种获取不到 Context 的情况下，即可以使用才方法获取 Context
      * <p>
      * 获取ApplicationContext

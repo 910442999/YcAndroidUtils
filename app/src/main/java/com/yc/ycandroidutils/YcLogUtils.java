@@ -1,4 +1,4 @@
-package com.yc.yclibrary;
+package com.yc.ycandroidutils;
 
 
 import android.support.annotation.NonNull;
@@ -11,19 +11,6 @@ import com.orhanobut.logger.PrettyFormatStrategy;
 
 
 public final class YcLogUtils {
-
-    public static void init(String tag) {
-        FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
-                .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
-                .tag(tag)   // (Optional) Global tag for every log. Default PRETTY_LOGGER
-                .build();
-        Logger.addLogAdapter(new AndroidLogAdapter(formatStrategy) {
-            @Override
-            public boolean isLoggable(int priority, String tag) {
-                return BuildConfig.DEBUG;
-            }
-        });
-    }
 
     public static void d(@NonNull String message, @Nullable Object... args) {
         Logger.d(message, args);
