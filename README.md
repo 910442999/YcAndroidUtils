@@ -7,6 +7,10 @@
 
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
+    
+    使用方法  com.yc:YcAndroidUtils:1.3.1
+    
+
     1.3.1 版本
 
       增加YcGlideCircleTransform  glide转变 圆形带边框
