@@ -89,17 +89,34 @@ public class YcGlideUtils {
     }
 
     /**
+     * glide加载本地 gif 图片
+     *
+     * @param context
+     * @param url
+     * @param as
+     */
+    public static void loadingGif(Context context, int url, ImageView imageView, int as, int preRes, int preErr, Transformation<Bitmap> transformation, int diskCache) {
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, transformation, diskCache);
+        if (as == YcConstUtils.NONE) {
+            Glide.with(context).asBitmap().apply(requestOptions).load(url).into(imageView);//它始终加载静态图像，
+        } else {
+            Glide.with(context).asGif().apply(requestOptions).load(url).into(imageView);//除非图像是动画gif ，否则将失败。
+        }
+    }
+
+    /**
      * glide加载网络 gif 图片
      *
      * @param context
      * @param url
      * @param as
      */
-    public static void loadingGif(Context context, String url, int as, ImageView imageView) {
+    public static void loadingGif(Context context, String url, ImageView imageView, int as, int preRes, int preErr, Transformation<Bitmap> transformation, int diskCache) {
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, transformation, diskCache);
         if (as == YcConstUtils.NONE) {
-            Glide.with(context).asBitmap().load(url).into(imageView);//它始终加载静态图像，
+            Glide.with(context).asBitmap().apply(requestOptions).load(url).into(imageView);//它始终加载静态图像，
         } else {
-            Glide.with(context).asGif().load(url).into(imageView);//除非图像是动画gif ，否则将失败。
+            Glide.with(context).asGif().apply(requestOptions).load(url).into(imageView);//除非图像是动画gif ，否则将失败。
         }
     }
 
@@ -116,15 +133,15 @@ public class YcGlideUtils {
      * @param imageView
      * @param radiusDp
      * @param loading
-     * @param width      采样率 500
-     * @param height     采样率 500
-     * @param diskChache
+     * @param width     采样率 500
+     * @param height    采样率 500
+     * @param diskCache
      */
-    public static void loadRoundCornerImage(Context mContext, String url, ImageView imageView, int radiusDp, int loading, int width, int height, int diskChache) {
+    public static void loadRoundCornerImage(Context mContext, String url, ImageView imageView, int radiusDp, int loading, int width, int height, int diskCache) {
         //设置图片圆角角度
         RoundedCorners roundedCorners = new RoundedCorners(radiusDp);
         //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
-        RequestOptions requestOptions = commonRequestOptions(loading, loading, roundedCorners, diskChache).override(width, height);
+        RequestOptions requestOptions = commonRequestOptions(loading, loading, roundedCorners, diskCache).override(width, height);
         loading(mContext, url, requestOptions, imageView);
     }
 
