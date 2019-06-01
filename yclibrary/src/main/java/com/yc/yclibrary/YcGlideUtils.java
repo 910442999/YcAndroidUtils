@@ -40,29 +40,6 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  */
 public class YcGlideUtils {
 
-    /**
-     * @param url
-     * @param img
-     * @param load
-     * @param err
-     * @param diskCache 如果是 YcConstUtils.NONE 不缓存  如果是 YcConstUtils.ALL   全部缓存  AUTOMATIC默认
-     */
-    public static void loadImageView(Context context, String url, ImageView img, int load, int err, int diskCache) {
-        RequestOptions options = new RequestOptions()
-                .placeholder(load);// 正在加载中的图片
-        options.error(err); // 加载失败的图片
-        if (diskCache == YcConstUtils.NONE) {
-            options.diskCacheStrategy(DiskCacheStrategy.NONE); // 磁盘缓存策略
-        } else if (diskCache == YcConstUtils.ALL) {
-            options.diskCacheStrategy(DiskCacheStrategy.ALL);
-        } else if (diskCache == YcConstUtils.DATA) {
-            options.diskCacheStrategy(DiskCacheStrategy.DATA);
-        } else if (diskCache == YcConstUtils.RESOURCE) {
-            options.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-        }
-
-        loading(context, url, options, img);
-    }
 
     public static void loadImageView(Context context, String url, ImageView img) {
         loadImageView(context, url, img, R.drawable.placeholder, R.drawable.placeholder, YcConstUtils.NONE);
@@ -74,6 +51,18 @@ public class YcGlideUtils {
 
     public static void loadImageView(Context context, String url, ImageView img, int load, int err) {
         loadImageView(context, url, img, load, err, YcConstUtils.NONE);
+    }
+
+    /**
+     * @param url
+     * @param img
+     * @param load
+     * @param err
+     * @param diskCache 如果是 YcConstUtils.NONE 不缓存  如果是 YcConstUtils.ALL   全部缓存  AUTOMATIC默认
+     */
+    public static void loadImageView(Context context, String url, ImageView img, int load, int err, int diskCache) {
+        RequestOptions requestOptions = commonRequestOptions(load, err, null, diskCache);
+        loading(context, url, requestOptions, img);
     }
 
     /**
