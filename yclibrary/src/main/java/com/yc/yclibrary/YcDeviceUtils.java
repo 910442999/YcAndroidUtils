@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +45,7 @@ public class YcDeviceUtils {
                 fileInputStream = new FileInputStream(new File(Environment.getRootDirectory(), "build.prop"));
                 properties.load(fileInputStream);
             } catch (Exception e) {
-                YcLogUtils.e("YcDeviceUtils : -------   文件读取错误");
+                Log.e("tag", "YcDeviceUtils : -------   文件读取错误");
             } finally {
                 try {
                     fileInputStream.close();
@@ -63,7 +64,7 @@ public class YcDeviceUtils {
             //flyme
             sFlymeVersionName = getLowerCaseName(properties, getMethod, KEY_FLYME_VERSION_NAME);
         } catch (Exception e) {
-            YcLogUtils.e("YcDeviceUtils : ------- 读取系统属性错误");
+            Log.e("tag", "YcDeviceUtils : ------- 读取系统属性错误");
         }
     }
 

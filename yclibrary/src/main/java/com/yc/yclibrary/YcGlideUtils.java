@@ -40,31 +40,6 @@ import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOption
  */
 public class YcGlideUtils {
 
-    /**
-     * @param url
-     * @param img
-     * @param load
-     * @param err
-     * @param diskCache 如果是 YcConstUtils.NONE 不缓存  如果是 YcConstUtils.ALL   全部缓存  AUTOMATIC默认
-     */
-    public static void loadImageView(Context context, String url, ImageView img, int load, int err, int diskCache) {
-        if (context == null)
-            return;
-        RequestOptions options = new RequestOptions()
-                .placeholder(load);// 正在加载中的图片
-        options.error(err); // 加载失败的图片
-        if (diskCache == YcConstUtils.NONE) {
-            options.diskCacheStrategy(DiskCacheStrategy.NONE); // 磁盘缓存策略
-        } else if (diskCache == YcConstUtils.ALL) {
-            options.diskCacheStrategy(DiskCacheStrategy.ALL);
-        } else if (diskCache == YcConstUtils.DATA) {
-            options.diskCacheStrategy(DiskCacheStrategy.DATA);
-        } else if (diskCache == YcConstUtils.RESOURCE) {
-            options.diskCacheStrategy(DiskCacheStrategy.RESOURCE);
-        }
-
-        loading(context, url, options, img);
-    }
 
     public static void loadImageView(Context context, String url, ImageView img) {
         if (context == null)
@@ -85,6 +60,20 @@ public class YcGlideUtils {
     }
 
     /**
+     * @param url
+     * @param img
+     * @param load
+     * @param err
+     * @param diskCache 如果是 YcConstUtils.NONE 不缓存  如果是 YcConstUtils.ALL   全部缓存  AUTOMATIC默认
+     */
+    public static void loadImageView(Context context, String url, ImageView img, int load, int err, int diskCache) {
+        if (context == null)
+            return;
+        RequestOptions requestOptions = commonRequestOptions(load, err, null, diskCache);
+        loading(context, url, requestOptions, img);
+    }
+
+    /**
      * 缩略图支持 - 现在，您可以同时将多个图像加载到相同的视图中，这样您就可以最大限度地减少用户在不牺牲质量的情况下查看加载调整器的时间。要首先在视图大小的1/10处加载缩略图，然后将完整图像加载到顶部
      *
      * @param context
@@ -99,19 +88,38 @@ public class YcGlideUtils {
     }
 
     /**
+     * glide加载本地 gif 图片
+     *
+     * @param context
+     * @param url
+     * @param as
+     */
+    public static void loadingGif(Context context, int url, ImageView imageView, int as, int preRes, int preErr, Transformation<Bitmap> transformation, int diskCache) {
+        if (context == null)
+            return;
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, transformation, diskCache);
+        if (as == YcConstUtils.NONE) {
+            Glide.with(context).asBitmap().apply(requestOptions).load(url).into(imageView);//它始终加载静态图像，
+        } else {
+            Glide.with(context).asGif().apply(requestOptions).load(url).into(imageView);//除非图像是动画gif ，否则将失败。
+        }
+    }
+
+    /**
      * glide加载网络 gif 图片
      *
      * @param context
      * @param url
      * @param as
      */
-    public static void loadingGif(Context context, String url, int as, ImageView imageView) {
+    public static void loadingGif(Context context, String url, ImageView imageView, int as, int preRes, int preErr, Transformation<Bitmap> transformation, int diskCache) {
         if (context == null)
             return;
+        RequestOptions requestOptions = commonRequestOptions(preRes, preErr, transformation, diskCache);
         if (as == YcConstUtils.NONE) {
-            Glide.with(context).asBitmap().load(url).into(imageView);//它始终加载静态图像，
+            Glide.with(context).asBitmap().apply(requestOptions).load(url).into(imageView);//它始终加载静态图像，
         } else {
-            Glide.with(context).asGif().load(url).into(imageView);//除非图像是动画gif ，否则将失败。
+            Glide.with(context).asGif().apply(requestOptions).load(url).into(imageView);//除非图像是动画gif ，否则将失败。
         }
     }
 
@@ -130,17 +138,17 @@ public class YcGlideUtils {
      * @param imageView
      * @param radiusDp
      * @param loading
-     * @param width      采样率 500
-     * @param height     采样率 500
-     * @param diskChache
+     * @param width     采样率 500
+     * @param height    采样率 500
+     * @param diskCache
      */
-    public static void loadRoundCornerImage(Context context, String url, ImageView imageView, int radiusDp, int loading, int width, int height, int diskChache) {
+    public static void loadRoundCornerImage(Context context, String url, ImageView imageView, int radiusDp, int loading, int width, int height, int diskCache) {
         if (context == null)
             return;
         //设置图片圆角角度
         RoundedCorners roundedCorners = new RoundedCorners(radiusDp);
         //通过RequestOptions扩展功能,override:采样率,因为ImageView就这么大,可以压缩图片,降低内存消耗
-        RequestOptions requestOptions = commonRequestOptions(loading, loading, roundedCorners, diskChache).override(width, height);
+        RequestOptions requestOptions = commonRequestOptions(loading, loading, roundedCorners, diskCache).override(width, height);
         loading(context, url, requestOptions, imageView);
     }
 

@@ -33,6 +33,7 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.yc.yclibrary.interfaces.OnSimpleClickListener;
@@ -1571,7 +1572,7 @@ public class YcImageUtils {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.get(key);// 获取缓存对象
         } else {
-            YcLogUtils.e("LruCache缓存对象为空");
+            Log.e("tag","LruCache缓存对象为空");
             return null;
         }
     }
@@ -1586,7 +1587,7 @@ public class YcImageUtils {
         if (mCache != null && !YcStringUtils.isEmpty(key)) {
             return mCache.remove(key);// 删除缓存对象
         } else {
-            YcLogUtils.e("LruCache缓存对象为空");
+            Log.e("tag","LruCache缓存对象为空");
             return null;
         }
     }

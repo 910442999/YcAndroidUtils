@@ -53,14 +53,24 @@ import java.util.regex.PatternSyntaxException;
 public class YcUtils {
     @SuppressLint("StaticFieldLeak")
     private static Context context;
+    private static YcUtils sYcUtils;
+
+    public static YcUtils getInstance() {
+        if (sYcUtils == null) {
+            sYcUtils = new YcUtils();
+        }
+        return sYcUtils;
+    }
 
     /**
      * 初始化工具类
      *
      * @param context 上下文
      */
-    public static void init(Context context) {
+    public YcUtils init(Context context) {
         YcUtils.context = context.getApplicationContext();
+        return this;
+
     }
 
     /**
