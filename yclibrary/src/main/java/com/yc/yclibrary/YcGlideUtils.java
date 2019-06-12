@@ -246,6 +246,15 @@ public class YcGlideUtils {
      *
      * @param context
      */
+    public static void loadingBlurformation(Context context, String url, ImageView imageView) {
+        loadingBlurformation(context, url, imageView);
+    }
+
+    /**
+     * 加载一个图片为高斯模糊效果
+     *
+     * @param context
+     */
     public static void loadingBlurformation(Context context, String url, ImageView imageView, int preRes, int preErr, int diskCache) {
         if (context == null)
             return;
