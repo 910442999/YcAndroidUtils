@@ -59,7 +59,7 @@ public class YcUtils {
      *
      * @param context 上下文
      */
-    public void init(Context context) {
+    public static void init(Context context) {
         YcUtils.context = context.getApplicationContext();
     }
 
