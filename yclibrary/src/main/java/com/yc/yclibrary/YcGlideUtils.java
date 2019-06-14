@@ -247,7 +247,7 @@ public class YcGlideUtils {
      * @param context
      */
     public static void loadingBlurformation(Context context, String url, ImageView imageView) {
-        loadingBlurformation(context, url, imageView);
+       loadingBlurformation(context, url, imageView, -1, -1, YcConstUtils.ALL);
     }
 
     /**
