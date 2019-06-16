@@ -3,6 +3,7 @@ package com.yc.yclibrary.view;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.view.WindowManager;
 
 import com.yc.yclibrary.R;
@@ -10,7 +11,7 @@ import com.yc.yclibrary.R;
 
 public class YcLoadingView extends ProgressDialog {
 
-    private int layout;
+    private int layoutResId;
 
     public YcLoadingView(Context context) {
         super(context);
@@ -20,8 +21,13 @@ public class YcLoadingView extends ProgressDialog {
         super(context, theme);
     }
 
-    public YcLoadingView(Context context, int theme, int layout) {
+    public YcLoadingView(Context context, int theme, @LayoutRes int layoutResID) {
         super(context, theme);
+        layoutResId = layoutResID;
+    }
+
+    public void setLayoutResId(@LayoutRes int layoutResID) {
+        layoutResId = layoutResID;
     }
 
     @Override
@@ -34,8 +40,12 @@ public class YcLoadingView extends ProgressDialog {
     private void init(Context context) {
         setCancelable(true);
         setCanceledOnTouchOutside(false);
+        if (layoutResId > 0) {
+            setContentView(layoutResId);//loading的xml文件
+        } else {
+            setContentView(R.layout.loading);//loading的xml文件
+        }
 
-        setContentView(R.layout.loading);//loading的xml文件
         WindowManager.LayoutParams params = getWindow().getAttributes();
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
