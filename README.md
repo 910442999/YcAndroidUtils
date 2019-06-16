@@ -8,7 +8,9 @@
 增加glide 圆角 圆形 模糊等图片的加载  数据转换  自定义圆角imageView
 
     
-    使用方法  com.yc:YcAndroidUtils:1.3.1
+    使用方法  com.yc:YcAndroidUtils:1.3.5
+    1.3.6以上版本 新的下载依赖的方式更改为
+     implementation 'com.github.910442999:YcAndroidUtils:1.0.3'
     
 
     1.3.1 版本

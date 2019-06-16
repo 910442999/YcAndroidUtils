@@ -13,7 +13,7 @@ public class BaseAppLication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        YcUtils.getInstance().init(this);
+        YcUtils.init(this);
         FormatStrategy formatStrategy = PrettyFormatStrategy.newBuilder()
                 .showThreadInfo(false)  // (Optional) Whether to show thread info or not. Default true
                 .tag("YcLogUtils")   // (Optional) Global tag for every log. Default PRETTY_LOGGER
